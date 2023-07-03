@@ -1,0 +1,32 @@
+pipeline{
+    agent any
+    stages{
+        stage('checkout') {
+            steps {
+                git credentialsId: 'gitID', url: 'https://github.com/kanchana08/Dockerfile_python.git'
+                }
+        }
+       
+        stage('copy'){
+        steps {
+            sh 'rm -rf /var/opt/prac || true'
+            sh 'cp -r /var/lib/jenkins/workspace/prac  /var/opt'
+        }
+    
+}
+      }
+    }
+    
+
+
+
+
+
+
+
+  
+
+
+
+
+    
