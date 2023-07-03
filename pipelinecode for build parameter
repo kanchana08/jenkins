@@ -1,0 +1,24 @@
+pipeline{
+    agent any
+    stages{
+        stage('checkout') {
+            steps {
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}"
+                git credentialsId: 'path', url: 'https://github.com/kanchana08/Dockerfile_python.git', branch: "${params.FROMBRANCH.split('/').last()}"
+                }
+        }
+      stage('docker build'){
+            steps{
+                sh 'docker build -t kanchana/new:v1 .'
+            
+            }
+        }
+        stage ('docker run'){
+            steps{
+                sh 'docker run --rm -dit --name sample  -p 4567:80 kanchana/new:v1 '
+            }
+        }
+ 
+       
+      }
+    }
