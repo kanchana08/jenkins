@@ -1,0 +1,15 @@
+pipeline{ 
+    agent any  
+    stages{ 
+        stage('checkout'){ 
+            steps{ 
+                git credentialsId: 'newPAT', url: 'https://github.com/kanchana08/docker-compose-sample.git'
+                } 
+            
+        } 
+        
+        
+    } 
+    
+    
+} 
