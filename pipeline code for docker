@@ -45,3 +45,41 @@ pipeline {
         }
     }
 }
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+pipeline{ 
+    agent any  
+    stages{ 
+        stage('checkout'){ 
+            steps{ 
+                git credentialsId: 'newPAT', url: 'https://github.com/kanchana08/docker-compose-sample.git'
+                } 
+            
+        } 
+        stage('docker build'){
+            steps{
+                sh 'docker build -t kanchana/new:v1 .'
+            
+            }
+        }
+        stage ('docker run'){
+            steps{
+                sh 'docker run --rm -dit --name sample  -p 4567:80 kanchana/new:v1 '
+            }
+        }
+        
+    } 
+    
+    post {
+        success {
+            mail to:"kanchanagm123@gmail.com", subject:"SUCCESS: ${currentBuild.fullDisplayName}", body: "Yay, we passed."
+        }
+        failure {
+            mail to:"kanchanagm123@gmail.com", subject:"FAILURE: ${currentBuild.fullDisplayName}", body: "Boo, we failed."
+        }
+    }   
+} 
+
+ 
