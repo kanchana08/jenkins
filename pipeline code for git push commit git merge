@@ -1,0 +1,120 @@
+pipeline{ -------------------------------------------------> if we clone first time we need put clone stage is nesseccery 
+    agent any
+    stages{
+        stage('checkout') {
+            steps {
+                
+                
+               git credentialsId: 'GITPATH', url: 'https://github.com/kanchana08/practice.git'
+               
+        }
+        
+     
+    }
+    stage('change'){
+        steps{
+            sh 'cd /var/lib/jenkins/workspace/git && git checkout master '
+        }
+    }
+    
+       stage('commit and push') {
+           steps{
+               sh 'cd /var/lib/jenkins/workspace/git && git add . && git commit -m ddtafzytafz || true'
+           }
+       }
+       stage('git push') {
+    steps {
+        withCredentials([
+            gitUsernamePassword(credentialsId: 'GITPATH', url: 'https://github.com/kanchana08/practice.git', gitToolName: 'Default')
+        ]) {
+            sh "git push --set-upstream origin master"
+        }
+    }
+}  
+        
+    }
+
+}
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+
+pipeline{
+    agent any
+    stages{
+        stage('change'){
+        steps{
+            sh 'cd /var/lib/jenkins/workspace/git && git checkout master && git merge master'
+        }
+    }
+    
+       stage('commit and push') {
+           steps{
+               sh ' git add . && git commit -m ddtafzytafz || true'
+           }
+       }
+       stage('git push') {
+    steps {
+        withCredentials([
+            gitUsernamePassword(credentialsId: 'GITPATH', url: 'https://github.com/kanchana08/practice.git', gitToolName: 'Default')
+        ]) {
+            sh "git push --set-upstream origin master"
+        }
+    }
+}  
+        
+    }
+
+}
+-----------------------------------------------------------------------------------------------------------------------------------------
+pipeline{-------------------------------------------> if we change the branch name it clone that branch
+    agent any
+    stages{
+        stage('checkout') {
+            steps {
+               
+                git branch: 'b123',  credentialsId: 'GITPATH', url: 'https://github.com/kanchana08/project1.git' 
+               
+        }
+    }
+    stage('change'){
+        steps{
+        
+            sh 'cd /var/lib/jenkins/workspace/merge && git checkout master '
+        }
+    }
+    stage('merge'){
+         steps{
+             
+             sh 'git merge b123 '
+             //sh'git merge --no-ff b123'
+         }
+         
+     }
+    stage('commit and push') {
+           steps{
+               sh ' git add . && git commit -m ddtafzytafz || true'
+           }
+       }
+     
+      
+       stage('git push') {
+    steps {
+        withCredentials([
+            gitUsernamePassword(credentialsId:  'pat', url: 'https://github.com/kanchana08/project1.git', gitToolName: 'Default')
+        ]) {
+            sh "git push --set-upstream origin master"
+        }
+    }
+}  
+        
+    }
+
+}
+        
+    
+
+
+
+
+
+
