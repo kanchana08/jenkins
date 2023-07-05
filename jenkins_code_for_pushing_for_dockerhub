@@ -1,0 +1,62 @@
+pipeline{  
+
+    agent any   
+
+    stages{  
+
+        stage('checkout'){  
+
+            steps{  
+
+                git credentialsId: 'newPAT', url: 'https://github.com/kanchana08/docker-compose-sample.git' 
+
+                }  
+
+             
+
+        }  
+
+        stage('docker build'){ 
+
+            steps{ 
+
+                script{ 
+
+                     
+
+                 
+
+                sh 'docker build -t kanchana0812/projnew:v1 .' 
+
+                } 
+
+             
+
+            } 
+
+        } 
+
+        stage('login') { 
+
+            steps{ 
+
+                script{ 
+
+                     withCredentials([string(credentialsId: 'dockerhub_pwd', variable: 'dockerhub')]) { 
+
+                         sh 'docker login -u kanchana0812 -p ${dockerhub}' 
+
+                          
+
+                     } 
+
+                     sh 'docker push kanchana0812/projnew:v1' 
+
+                    } 
+
+                } 
+
+            } 
+    } 
+
+} 
