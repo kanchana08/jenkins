@@ -1,0 +1,49 @@
+
+
+pipeline {  
+
+  
+
+    agent { 
+
+    node{ 
+
+        label 'windowsslave' 
+
+    customWorkspace 'C:/new11/new22' 
+
+    } 
+
+    }  
+
+  
+
+  stages {  
+
+  
+
+    stage('Git checkout') {  
+
+  
+
+       steps {  
+
+  
+
+        git credentialsId: 'PATH', url: 'https://github.com/kanchana08/practice.git'
+
+  
+
+       }  
+
+  
+
+    }  
+
+  
+
+  }      
+
+  
+
+} 
