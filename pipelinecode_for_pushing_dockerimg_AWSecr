@@ -14,10 +14,7 @@ stages {
  }
     stage('Build Docker Image') { 
         steps { 
-      //   script {
-  // dockerImage = docker.build "lamda_ply:latest"
-                
-         //   } 
+      
             sh "docker build -t lamda_ply:latest ."
         }
         }
