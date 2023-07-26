@@ -33,7 +33,7 @@ stages {
     
 }
 ========================================================================================================
-pipeline { --------------------------------------------------------------(this is good means i put build stage instage('Publish to ECR') )
+pipeline { --------------------------------------------------------------( i put build stage in stage('Publish to ECR') )
     agent any 
 environment {
      AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}"
