@@ -1,0 +1,64 @@
+pipeline {
+    agent any 
+environment {
+     AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}"
+        AWS_SECRET_ACCESS_KEY="${env.AWS_SECRET_ACCESS_KEY}"
+        AWS_REGION=('us-east-1')
+}
+stages {
+    stage('Cloning Git') {
+ steps {
+     git credentialsId: 'PAT', url: 'https://github.com/kanchana08/Dockerfile_python.git'
+               
+ }
+ }
+    stage('Build Docker Image') { 
+        steps { 
+      //   script {
+  // dockerImage = docker.build "lamda_ply:latest"
+                
+         //   } 
+            sh "docker build -t lamda_ply:latest ."
+        }
+        }
+        stage('Publish to ECR') { 
+            steps {
+                script {
+                        sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 165271113309.dkr.ecr.us-east-1.amazonaws.com" 
+                        sh "docker tag lamda_ply:latest 165271113309.dkr.ecr.us-east-1.amazonaws.com/lamda_ply:latest" 
+                        sh "docker push 165271113309.dkr.ecr.us-east-1.amazonaws.com/lamda_ply:latest"
+                        } 
+                    
+                } 
+                
+            }
+            } 
+    
+}
+    
+================================================================================================
+
+pipeline{  ---------------------------------------------------------------------------for s3
+    agent any 
+    environment {
+        AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}"
+        AWS_SECRET_ACCESS_KEY="${env.AWS_SECRET_ACCESS_KEY}"
+        AWS_REGION=('us-east-1')
+    }
+    stages{
+        stage('exm stage'){
+            steps {
+                script{
+                    //sh"aws s3 ls s3://arb111"
+                    sh"aws s3 ls"
+                }
+            }
+        }
+    }
+    
+}
+
+
+
+
+
