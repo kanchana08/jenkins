@@ -98,6 +98,59 @@ pipeline{  ---------------------------------------------------------------------
     }
     
 }
+=======================================================================================================================
+
+
+
+pipeline {
+    agent any 
+environment {
+     AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}"
+        AWS_SECRET_ACCESS_KEY="${env.AWS_SECRET_ACCESS_KEY}"
+       // AWS_REGION=('us-east-1')
+        AWS_REGION="${env.AWS_DEFAULT_REGION}"
+}
+stages {
+    stage('Cloning Git') {
+ steps {
+     git credentialsId: 'PAT', url: 'https://github.com/kanchana08/Dockerfile_python.git'
+               
+ }
+ }
+    stage('Build Docker Image') { 
+        steps { 
+      //   script {
+  // dockerImage = docker.build "lamda_ply:latest"
+                
+         //   } 
+            sh "docker build -t lamda_ply:latest ."
+        }
+        }
+        stage('Publish to ECR') { 
+            steps {
+                script {
+                        sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 165271113309.dkr.ecr.us-east-1.amazonaws.com"
+                        sh" aws ecr batch-delete-image --repository-name lamda_ply --image-ids imageTag=latest"
+                        //sh" aws ecr batch-delete-image --repository-name lamda_ply --image-ids imageTag=latest"
+                         sh"docker tag lamda_ply:latest 165271113309.dkr.ecr.us-east-1.amazonaws.com/lamda_ply:latest" 
+                        sh "docker push 165271113309.dkr.ecr.us-east-1.amazonaws.com/lamda_ply:latest"
+                        } 
+                    
+                } 
+                
+            }
+            } 
+    
+}
+    
+
+
+
+
+
+
+
+
 
 
 
