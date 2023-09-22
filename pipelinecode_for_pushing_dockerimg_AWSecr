@@ -289,7 +289,75 @@ stage('lambda_test_function'){
     
 }
 
+============================================================================================================================
 
+code for pushing image to ECR and lambda,lambda test and it create cloudlogs also 
+
+
+pipeline { 
+    agent any
+    environment {
+        AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}" 
+        AWS_SECRET_ACCESS_KEY="${env.AWS_SECRET_ACCESS_KEY}" 
+        AWS_REGION=('us-east-1')
+        
+    }
+    stages {
+        stage('Cloning Git') {
+            steps {
+                git credentialsId: 'PATH', url: 'https://github.com/kanchana08/Dockerfile_python.git'
+                
+            } 
+            
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t playwright_123:latest ." 
+                
+            } 
+            
+        }
+        stage('Publish to ECR') {
+            steps {
+                script { 
+
+                        sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 909100690382.dkr.ecr.us-east-1.amazonaws.com"
+                        //sh" aws ecr batch-delete-image --repository-name playwright_123 --image-ids imageTag=latest"
+                        
+                        sh" aws ecr batch-delete-image --repository-name playwright_123 --image-ids imageTag=latest" 
+                        sh "docker tag playwright_123:latest 909100690382.dkr.ecr.us-east-1.amazonaws.com/playwright_123:latest"
+                        sh "docker push 909100690382.dkr.ecr.us-east-1.amazonaws.com/playwright_123:latest" 
+
+                        }  
+
+                    } 
+            
+        } 
+        
+stage('lambda_function'){
+    steps{
+        script{
+ sh'aws lambda update-function-code --region us-east-1 --function-name lambdafunction --image-uri 909100690382.dkr.ecr.us-east-1.amazonaws.com/playwright_123:latest'
+
+        }
+    }
+}
+        
+        
+        
+stage('lambda_test_function'){
+    steps{
+        sh' aws lambda invoke --function-name lambdafunction out --log-type Tail'
+
+    }
+}
+        
+        
+        
+        
+    }
+    
+}
 
 
 
