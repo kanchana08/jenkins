@@ -19,3 +19,20 @@ pipeline {
         }
     }
  }
+-----------------------------------------------------------------------------------------------------------------------------
+
+pipeline {
+    agent {label 'slave1 && slave2'}             or  agent {label 'slave1 || slave2'}
+    stages {
+        stage('Test on Linux') {
+            
+            steps {
+                git branch: 'main', credentialsId: 'PAT', url: 'https://github.com/kanchana08/jenkins.git'
+            }
+        }
+		}
+		}
+		
+
+
+
