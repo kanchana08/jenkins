@@ -1,0 +1,43 @@
+
+pipeline {
+    agent any
+ 
+    stages {
+        stage('Backup Jenkins') {
+            steps {
+                
+                sh 'tar -czf jenkins_backup.tar.gz /example/exm'
+                 
+               
+            }
+        }
+ 
+        stage('Push to GitHub') {
+            steps {
+                // Clone the GitHub repository
+                 git credentialsId: 'GITPAT', url: 'https://github.com/kanchana08/Dockerfile_node.git'  
+                 
+                  sh 'cp jenkins_backup.tar.gz jnkbackup/ '
+                
+            }
+        }
+    
+        stage('git push'){
+            steps{
+                sh 'cd /var/lib/jenkins/workspace/jenkinsbackup123/jnkbackup && git checkout master '
+                sh ' git add . && git commit -m ddtafzytafz || true'
+            }
+       
+        }
+    
+        stage('gitpushss') {
+    steps {
+        withCredentials([
+            gitUsernamePassword(credentialsId:  'GITPAT', url: 'https://github.com/kanchana08/Dockerfile_node.git', gitToolName: 'Default')
+        ]) {
+            sh "git push --set-upstream origin master"
+        }
+    }
+}  
+    }
+}
