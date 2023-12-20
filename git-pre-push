@@ -1,0 +1,42 @@
+first we need clone the git repo
+cd /
+git clone https://github.com/kanchana08/test.git
+cd test   -----------> check git repo files
+cd .git/hooks
+create vi pre-push and paste code this code for file should contain # ,## and //
+
+#!/bin/bash
+while read local_ref local_sha remote_ref remote_sha
+do
+  # Iterate through each file
+  for file in $(git diff --name-only $remote_sha $local_sha)
+  do
+      # Check if the file contains all three types of comments
+      if ! grep -q -E '^\s*#' "$file" || ! grep -q -E '^\s*##' "$file" || ! grep -q -E '^\s*//' "$file"; then
+          echo "Error: Not all three types of comments found in $file. Canceling push."
+          exit 1
+      fi
+  done
+done
+echo "All three types of comments found in all files. Proceeding with push."
+
+cd ../..
+modify the repo files 
+=======================================================================================================================================
+for using module name, functions, classes
+
+#!/bin/bash
+while read local_ref local_sha remote_ref remote_sha
+do
+  # Iterate through each file
+  for file in $(git diff --name-only $remote_sha $local_sha)
+  do
+      # Check if the file contains all three types of comments
+      if ! grep -q -E '^\s*Module Name' "$file" || ! grep -q -E '^\s*Functions' "$file" || ! grep -q -E '^\s*Classes' "$file"; then
+          echo "Error: Not all three types of comments found in $file. Canceling push."
+          exit 1
+      fi
+  done
+done
+echo "All three types of comments found in all files. Proceeding with push."
+
