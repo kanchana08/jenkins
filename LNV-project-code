@@ -1,0 +1,83 @@
+pipeline { 
+    agent any
+ 
+    environment {
+        AWS_ACCESS_KEY_ID="${env.AWS_ACCESS_KEY_ID}" 
+        AWS_SECRET_ACCESS_KEY="${env.AWS_SECRET_ACCESS_KEY}" 
+        AWS_REGION=('us-east-2')
+        
+    }
+    stages {
+        stage('Cloning Git') {
+            steps {
+            
+                git branch: 'lambda_api', credentialsId: 'PAT', url: 'https://192.168.10.58/shashikiran.n/ida_automation_extraction.git'
+            } 
+            
+        }
+        stage('AWS CLI Login') {
+            steps {
+              
+                 sh "aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 722413932336.dkr.ecr.us-east-2.amazonaws.com"
+            } 
+            
+        }
+        stage(' Docker build and Pushing image to ECR') {
+            steps {
+                script { 
+
+                       
+                        sh "docker build -t ce-repo:latest ." 
+                        
+                        sh" aws ecr batch-delete-image --repository-name ce-repo --region us-east-2 --image-ids imageTag=latest" 
+                        sh "docker tag ce-repo:latest 722413932336.dkr.ecr.us-east-2.amazonaws.com/ce-repo:latest"
+                        sh "docker push 722413932336.dkr.ecr.us-east-2.amazonaws.com/ce-repo:latest" 
+                        
+
+
+                        }  
+
+                    } 
+            
+        } 
+        
+stage('lambda_function'){
+    steps{
+        script{
+ sh'aws lambda update-function-code --region us-east-2 --function-name ce-function --image-uri 722413932336.dkr.ecr.us-east-2.amazonaws.com/ce-repo:latest'
+
+        }
+    }
+}
+  stage('lambda_test_function'){
+    steps{
+        script {
+                    def lambdaFunctionName = 'ce-function'
+                    def testEvent = '{"Filename": "ok_cleveland" ,"RFRM": "" ,"RTO": "" ,"DNUM": "R2008-41386" ,"BNUM": "" ,"PNUM": "", "GRTR": "" ,"GRTE": "" ,"PANY": "" ,"APN": "" ,"BNAME": "" ,"PADD": "" ,"LOT": "" ,"BLK": "" ,"UNT": "" ,"SEC": "" ,"ON": "" ,"TOWN": "" ,"RANG": "" ,"type": "F" ,"doc": "Y" ,"docno": "176548787777" ,"loan_date": "" ,"loan_amt": ""}'
+ 
+                    sh "aws lambda invoke --function-name ${lambdaFunctionName} --payload '${testEvent}' --region us-east-2 --cli-read-timeout 0 out --log-type Tail"
+                }
+
+    }
+}     
+        
+
+}
+   post{
+        failure{
+            mail to: "kanchanagm@stellaripl.com",
+             cc: "nadimpali.pradeepk@stellaripl.com",
+            subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
+            
+        }
+    }
+}
+
+================================================================================================================================================================================
+
+https://aws.amazon.com/tutorials/run-serverless-code/     ---------------------> code lambda document 
+
+
+
+
