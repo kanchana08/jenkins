@@ -1,0 +1,33 @@
+pipeline { 
+
+    agent {label 'windowsslave'}
+
+  stages { 
+
+    stage('Git checkout') { 
+
+       steps { 
+
+        git branch: 'main', credentialsId: 'PAT', url: 'https://192.168.10.58/dev/dex-validation-wrapper.git'
+
+       } 
+
+    }
+    stage('Copy Files') {
+      steps {
+         bat 'xcopy F:\\Jenkins\\workspace\\Dex-validation-Wrapper\\*.* "E:\\Plant\\3-DE Batcher\\" /s /e /h /y'
+      }
+    }
+     
+  } 
+  post{
+        failure{
+            mail to: "nadimpali.pradeepk@stellaripl.com",
+            subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
+            
+        }
+    }
+}
+
+
