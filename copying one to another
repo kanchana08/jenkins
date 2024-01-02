@@ -25,22 +25,23 @@ pipeline{
 
             sh 'rm -rf /chk/copy || true' 
 
-            sh 'cp -r /var/lib/jenkins/workspace/copy  /chk' 
-
-             
-
-        
-
-        } 
-
-     
-
+            sh 'cp -rf /var/lib/jenkins/workspace/copy  /chk' 
+ } 
 } 
+ } 
+} 
+=============================================================================================================================
+=============================================================================================================================
 
+ stage('copy'){ 
+
+        steps{ 
+
+          //sh "rm -rf /var/opt/fasttclose || true" 
+
+          sh "cp  -rf /home/jenkins/workspace/copy /var/opt/ " 
       } 
 
     } 
-
-     
 
   
