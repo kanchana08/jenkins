@@ -1,0 +1,36 @@
+we need to change def credentialsId and def gitRepo
+
+
+
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Clone and Checkout Newly Created Branch') {
+            steps {
+                script {
+                    def credentialsId = 'GITPAT' // Replace with your Jenkins credentials ID
+                    def gitRepo = 'https://github.com/kanchana08/test.git'
+                    
+                    // Clone the repository using credentials
+                    git branch: 'master', credentialsId: credentialsId, url: gitRepo
+                    
+                    // Fetch all branches from the remote repository
+                    git credentialsId: credentialsId, url: gitRepo, branches: '+refs/heads/*:refs/remotes/origin/*', tags: false
+                    
+                    // Get the list of branches
+                    def branches = sh(script: 'git branch -r --sort=-committerdate', returnStdout: true).trim().split('\n')
+                    
+                    // Assuming the latest branch is at the first index of the array (after sorting)
+                    def latestBranch = branches[0].trim().replaceAll(/^origin\//, '')
+                    
+                    // Checkout the latest branch
+                    git branch: latestBranch, credentialsId: credentialsId, url: gitRepo
+                }
+            }
+        }
+        // Other stages of your Jenkins pipeline
+    }
+    // Post-build actions or other configurations
+}
