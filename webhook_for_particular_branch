@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the repository
+            
+                git branch: 'sub', credentialsId: 'PAT', url: 'https://github.com/kanchana08/practice.git'
+            }
+        }
+    
+         stage('Build') {
+            // Add more stages as needed
+            steps {
+                script {
+                    // Check if the branch is the desired one
+                    if (env.BRANCH_NAME == 'sub') {
+                        echo "Starting the job for branch: ${env.BRANCH_NAME}"
+                        // Your build steps go here
+                    } else {
+                        echo "Skipping the job as it's not for the desired branch."
+                    }
+                }
+            }
+        }
+    }
+}
