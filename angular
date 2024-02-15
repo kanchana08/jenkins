@@ -1,10 +1,19 @@
+git clone ( clone that angular repo)
+
+IN SERVER 
+
 npm install
 
 nohup ng serve 2>&1 >> /var/log/ng.log &  -----------------> to run angular application in dedatched mode(it will run angular application in background).
 
-sudo lsof -i:4200(port number)
+[] if we done any modification in code, do git clone it will update the server. 
+
+
+[] to stop the server follow below command 
+sudo lsof -i:4200(port number) 
 
 sudo kill -9 18359(PID number) 
+
 
 
 
