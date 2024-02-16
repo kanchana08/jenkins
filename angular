@@ -1,3 +1,24 @@
+cd /var/lib/jenkins/workspace/dtfuyfuf
+#sudo apt-get install npm
+npm install
+#npm start
+npm run ng build --prod
+cp -r dist/angular-build/* /var/www/html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 git clone ( clone that angular repo)
 
 IN SERVER 
