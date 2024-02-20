@@ -1,0 +1,47 @@
+pipeline{
+
+  agent {label 'linux126'} 
+
+  
+
+  stages {  
+
+  
+
+    stage('Git checkout') {  
+
+  
+
+       steps {  
+
+  
+
+        git branch: 'master', credentialsId: 'PAT', url: 'https://192.168.10.58/nalind/ulrs.git' 
+
+  
+
+       }  
+
+  
+
+    }  
+
+  
+
+  }     
+
+   post{ 
+
+        failure{ 
+
+            mail to: "nadimpali.pradeepk@stellaripl.com", 
+
+            subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}", 
+
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}" 
+
+             
+
+        } 
+}
+}
