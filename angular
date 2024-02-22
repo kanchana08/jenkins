@@ -6,19 +6,8 @@ npm run ng build --prod
 cp -r dist/angular-build/* /var/www/html
 
 =======================================================================================================
-cd /var/lib/jenkins/workspace/testing
-npm install 
-npm run ng build --prod
-npm install pm2
-npx pm2 start "ng serve" --name angular
 
-
-
-
-
-
-
-
+npx pm2 delete message || true && npx pm2 start message.js
 
 
 
