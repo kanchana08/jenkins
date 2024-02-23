@@ -1,0 +1,57 @@
+cd testing
+docker-compose.yaml
+backend
+  Dockerfile
+  index.html
+frontend
+  Dockerfile
+  index.html
+
+
+
+[]  vi docker-compose.yaml
+  services:
+  backend:
+    build: backend/.
+    ports:
+      - "8088:80"
+  frontend:
+    build: frontend/.
+    ports:
+      - "8089:80"
+
+
+[] cat index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>backend</h1>
+
+
+</body>
+</html>
+
+
+[] cat Dockerfile
+FROM nginx
+ 
+ RUN apt-get update && apt-get upgrade -y
+ 
+ COPY index.html /usr/share/nginx/html
+ 
+ EXPOSE 8080
+ 
+ CMD ["nginx", "-g", "daemon off;"]
+
+
+
+in index.html we will change <h1>backend</h1> or <h1>frontend</h1> accordingly 
+
+[] docker-compose up -d 
+
+
+
