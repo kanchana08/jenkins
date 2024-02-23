@@ -7,13 +7,6 @@ cp -r dist/angular-build/* /var/www/html
 
 =======================================================================================================
 
-npx pm2 delete message || true && npx pm2 start message.js
-
-
-
-
-
-
 git clone ( clone that angular repo)
 
 IN SERVER 
@@ -29,6 +22,15 @@ nohup ng serve 2>&1 >> /var/log/ng.log &  -----------------> to run angular appl
 sudo lsof -i:4200(port number) 
 
 sudo kill -9 18359(PID number) 
+
+==================================================================================================================
+
+pm2 command to run angular application
+
+[] npx pm2 start "ng serve" --name ang-app   
+
+
+
 
 
 
