@@ -29,6 +29,31 @@ pm2 command to run angular application
 
 [] npx pm2 start "ng serve" --name ang-app   
 
+==============================================================================================================
+using pm2 
+
+pipeline{
+    agent any 
+
+    stages { 
+
+        stage('checkout') { 
+
+            steps { 
+              sh'cd /json'
+                sh'npx pm2 start message.js'
+                sh'npx pm2 list'
+                sh' npx pm2 delete message.js || true && npx pm2 start message.js'
+                } 
+        } 
+    }
+}
+
+[] npx pm2 start filename 
+[] npx pm2 delete all        to delete all apps (pm2 delete all).
+[] npx pm2 delete (filename)     for particular file.
+[] npx pm2 list         to list running files.  
+
 
 
 
