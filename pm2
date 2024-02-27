@@ -19,7 +19,7 @@ pipeline{
 [] npx pm2 start filename 
 [] npx pm2 delete all to delete all apps (pm2 delete all)
 [] npx pm2 delete (filename)  for particular file
-[] npx pm2 list  to list running files
+[] npx pm2 list            to list running files
 [] npx pm2 restart filename 
 [] npx pm2 stop filename 
 [] npx pm2 status
