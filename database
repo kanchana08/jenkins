@@ -1,0 +1,31 @@
+these is help to create database we can check this to connecte mysql  
+
+[] vi docker-compose.yml
+
+version: '3'
+
+services:
+  db:
+    image: mysql
+    container_name: your-database-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dbname
+      MYSQL_USER: username
+      MYSQL_PASSWORD: root1
+    ports:
+      - "3306:3306"
+    volumes:
+      - /path/on/host:/var/lib/mysql
+
+
+[]  docker-compose up -d
+
+
+[] docker run --name mysqldata -e MYSQL_ROOT_PASSWORD=root -p 3333:3306 -d mysql:latest
+
+================================================================================================================================================
+
+To check nestjs/nodejs is connecte to mysql 
+
+[] docker logs containerID   
