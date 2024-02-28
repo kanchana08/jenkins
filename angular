@@ -1,3 +1,50 @@
+for angular(packege type) we need setup manege jenkins --> tool -->  NodeJS installations --> in name give whatever(ex = npm) --> in version mention which version node installed in server(check node -v) save
+in pipeline we should mention  tools {nodejs "npm"}  
+
+
+pipeline { 
+
+    agent any 
+    
+    tools {nodejs "npm"} 
+    
+
+    stages { 
+
+        stage('checkout') { 
+
+            steps { 
+
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/angular.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+                } 
+
+ 
+
+        } 
+
+      stage('angular'){ 
+
+            steps{ 
+
+                sh 'cd /var/lib/jenkins/workspace/anglr'
+                sh'npm install'
+                sh'npm run ng build --prod'
+                sh'cp -r dist/angular-build/* /var/www/html'
+
+             
+            } 
+
+        } 
+        
+    }
+}
+
+====================================================================================================================================================
+freestyle proj
+
 cd /var/lib/jenkins/workspace/dtfuyfuf
 #sudo apt-get install npm
 npm install
