@@ -1,9 +1,9 @@
 cd testing
-docker-compose.yaml
-backend
+[]docker-compose.yaml
+[]backend
   Dockerfile
   index.html
-frontend
+[]frontend
   Dockerfile
   index.html
 
