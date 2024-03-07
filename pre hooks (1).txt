@@ -1,0 +1,41 @@
+git remote add origin https://192.168.10.58/ida-devops/commit_repo.git
+
+
+glpat-xU6V8w1yDjDsyjy5gSQV
+
+
+Navigate to your Git repository.
+Create a file named pre-push (without any file extension) in the .git/hooks/ directory within your repository.
+Open the pre-push file in a text editor and add the following script:
+bash
+Copy code
+#!/bin/bash
+while read local_ref local_sha remote_ref remote_sha
+do
+   # Iterate through each file
+   for file in $(git diff --name-only $remote_sha $local_sha)
+   do
+       # Check if the file contains any comments
+       if grep -q -E '^\s*//' $file; then
+           echo "Comments found in $file. Proceeding with push."
+       else
+           echo "Error: No comments found in $file. Canceling push."
+           exit 1
+       fi
+   done
+done
+# If the script reaches here, it means comments were found in all files
+exit 0
+Save and close the file. Make it executable:
+bash
+Copy code
+chmod +x .git/hooks/pre-push
+Now, when you try to push changes, the script will check each modified file for comments. If any file lacks comments, the push will be canceled.
+Keep in mind that this is a basic example, and you might need to adapt it based on your specific requirements and the comment style used in your files. Additionally, it won't differentiate between types of comments (e.g., single-line vs. multi-line comments). Adjust the script accordingly to fit your needs.
+
+
+
+
+
+
+if grep -q -E '^\s*#|^\s*##|^\s*//' "$file"; then
