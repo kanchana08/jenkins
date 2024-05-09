@@ -1,3 +1,8 @@
+
+
+
+https://medium.com/@srghimire061/how-to-manage-users-and-roles-in-jenkins-fe6a7a8be344 
+
 [] install role base startage plugin 
 [] create user 
 [] go to manage jenkins > security > Authentication > in  Security Realm >select jenkins own user database > in Authorization > select role base startergy
@@ -5,6 +10,7 @@
 (ex=dev*)  user can view project started with dev, for this we need to select option in manage owenship select jobs and in job and view select all option and save 
 [] select assign role > in  Global roles > add user, add the user which we created and select the  Global roles what we created and in  Item roles  add the user and select what we created 
 [] check it 
+
 
 
 
