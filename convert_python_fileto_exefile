@@ -1,0 +1,8 @@
+[] here we mentioned aws credentials in pythonfile so we need to converte python file into excutable file (.exe)
+[] we need inatall pyinstaller (pip install pyinstaller) 
+[] we need to move pythonfile folder 
+[] cd pythonfile folder 
+[] pyinstaller --onefile pythonfile.py    ------->command 
+[] after this it will create dist folder move to dist folder. in that dist folder one file will create
+[] ./filename ------------------> to run the in ubuntu server 
+[]filename   --------------------> to run the in windows server
