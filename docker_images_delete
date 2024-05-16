@@ -1,0 +1,7 @@
+[] cd /var/lib/docker/overlay2
+
+
+  or 
+  [] cd /var/lib/docker/overlay
+
+  [] here docker will store deleted images (like bin storege )
