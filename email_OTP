@@ -1,0 +1,19 @@
+[] we need to install Email Extension Template Plugin and MFA/Two-Factor-Authentication(2FA) Version  
+
+ 
+
+[] we need to test email and after installing MFR plugin we will get 2FA global configuration option in manage jenkins. 
+
+[] inside the 2FA configuration we need to Enable 2FA for all users and we need to add email ID which we tested  
+
+ 
+
+[] we need to create user, while creating we need add email, for that email user will get OTP 
+
+ 
+
+[] after creating user, we need to assign role for that user  
+
+ 
+
+[] we need to add email which we added in 2FA configure in jenkins Admin 
