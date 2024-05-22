@@ -15,5 +15,3 @@
 [] after creating user, we need to assign role for that user  
 
  
-
-[] we need to add email which we added in 2FA configure in jenkins Admin 
