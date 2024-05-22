@@ -1,0 +1,45 @@
+[]in jenkins dashboard
+[]manage jenkins
+[]manage plugins
+[] available                or      installed
+[] email ext plugins              [] email ext plugins 
+[] in jenkins dashboard
+[] manage jenkins
+[] configure system 
+[] email notification
+[]SMTP server
+[] smtp.gamil.com
+[]default user email suffix
+[]@gamil.com
+[]advance
+[] select Use SMTP Authentication
+[]user name
+[]kanchana@gamil.com
+[]password (passwor what we generated in gmail)
+[]select use SSL     or  we can also select TLS but SMTP port number is 587
+we need set our email account
+[]google account
+[]security
+[]input password as asked
+[]turn Once(you could use SMS to get gmail code to activate 2-step)
+[]google account
+[]security
+[]app password
+[]input password as asked 
+[]select the app and device
+[]example-->other (custom name)
+[]input app name 
+[]jenkins
+[]generate 
+[]copy a 16 -character password
+[] use a 16 -char password with gmail
+continu with jenkins
+[] select [] use SSL
+SMTP port  
+[]465
+[]replay to address
+[]kanchanagm123@gmail
+[]test configuration by sending test email
+[]test email recipient 
+[] kanchanagm123@gmail
+[]test configuration ----> we get mail
