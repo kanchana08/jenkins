@@ -1,0 +1,30 @@
+stash and unstash will helps to when the node get stop, data will store in unstash of anther node 
+
+
+pipeline {
+  agent any
+
+  stages {
+    stage('Start') {
+      //agent { label 'debian11' }
+      steps {
+        sh '''
+          touch sample.sh
+          mkdir -p dir
+          touch dir/sample_nested.sh
+          touch dir/sample_nested2.sh
+        '''
+        stash(name: 'sampleStash')
+      }
+    }
+    stage('Verify files') {
+      //agent { label 'debian10' }
+      steps {
+          sh"cd /practies"
+        unstash 'sampleStash'
+        sh 'tree'
+      }
+    }
+  }
+
+}
