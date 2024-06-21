@@ -1,4 +1,4 @@
-stash and unstash will helps to when the node get stop, data will store in unstash of anther node 
+stash and unstash will helps to when the node get stop, data will store in unstash of another node 
 
 
 pipeline {
