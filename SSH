@@ -1,9 +1,12 @@
-[] create ssh key in jenkins 
+[] create ssh key in root
 
 [] create one users 
 [] crete ssh key for that users 
 [] remove public-key and private-key 
-[] create vi authorized_keys,  paste jenkins public_key 
+[] create vi authorized_keys,  paste public_key
+[] chmod 600 authorized_keys
+[]  chmod 700 .ssh
+
 
 
 To Fix SSH Permission Denied (Public key)
@@ -12,14 +15,22 @@ https://www.tecmint.com/ssh-permission-denied-publickey/
 [] sudo vim /etc/ssh/sshd_config
 [] uncomment     []PubkeyAuthentication Yes  and  []AuthorizedKeysFile      .ssh/authorized_keys .ssh/authorized_keys2
 [] sudo systemctl restart ssh
+[] create one dir in /var/www/html 
 
 
-
-[] in jenkins server  check the connection 
+[]check the connection 
 [] scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
 
 [] sshpass -p "kanchana1" scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
 
+[] after getting successfull 
+
+[] create ssh key in jenkins and copy the public-key to users 
+
+[]check the connection 
+[] scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
+
+[] sshpass -p "kanchana1" scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
 
 if we run the commands second time it will show the  permission denied error to fix that
 https://gist.github.com/desferreira/2dced846c6e6e9cbf67f79227d613e7c
@@ -35,7 +46,6 @@ https://gist.github.com/desferreira/2dced846c6e6e9cbf67f79227d613e7c
 [] sshpass -p "kanchana1" scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
   
 ================================================================================================================
-
 [] create one freestyle project 
 [] add gir repo 
 [] sudo chmod -R 777 /var/www/html/test/
