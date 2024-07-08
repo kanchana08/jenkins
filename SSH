@@ -25,7 +25,7 @@ https://www.tecmint.com/ssh-permission-denied-publickey/
 
 [] after getting successfull 
 
-[] create ssh key in jenkins and copy the public-key to users 
+[] create ssh key in jenkins user and copy the public-key to users 
 
 []check the connection 
 [] scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test
