@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    
+    stages{
+        stage("git_checkout") {
+            steps{
+                 git credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/practice.git'
+            }
+        }
+    stage('Download') {
+            steps {
+                archiveArtifacts(artifacts: '**/*.js', followSymlinks: true)
+            }
+        }
+        
+    }
+}
+
+=========================================================
+'**/*.js' ------------------------>it will save the .js files
+
+'**/*'  ------------------------> it will save all files 
