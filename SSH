@@ -15,7 +15,7 @@ https://www.tecmint.com/ssh-permission-denied-publickey/
 [] sudo vim /etc/ssh/sshd_config
 [] uncomment     []PubkeyAuthentication Yes  and  []AuthorizedKeysFile      .ssh/authorized_keys .ssh/authorized_keys2
 [] sudo systemctl restart ssh
-[] create one dir in /var/www/html 
+[] create one dir in /var/www/html ( apt install nginx )
 
 
 []check the connection 
