@@ -1,0 +1,17 @@
+To create new project   
+
+[] developer will give the html path  
+
+[] create that path and give chmod -R 777 permission 
+
+[] switch to jenkins user and move to /var/lib/jenkins/workspace  
+
+[] check the connection,  
+
+[] sudo chmod -R 777 /var/www/html/test/ 
+
+[] scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test 
+
+[] sshpass -p "kanchana1" scp -r /var/lib/jenkins/workspace/test kanchana@3.138.244.128:/var/www/html/test 
+
+ [] after getting connections successful create pipeline code  
