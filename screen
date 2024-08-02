@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+   stages{
+        stage(checkout){
+            steps{
+                
+                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
+            }
+        }
+        stage(screen){
+            steps{
+                script{
+                    
+                    sh "screen -XS hello_session quit"
+                    sh"screen -XS hello_world_session quit"
+                    sh 'sudo -u jenkins bash -c "python3 screen_session.py "'
+                    sh "sudo -u jenkins screen -ls"
+                    
+                }
+                
+            }
+            
+        }
+       
+   }
+}            
+
