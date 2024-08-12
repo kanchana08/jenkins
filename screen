@@ -49,10 +49,11 @@ pipeline {
         
         stage('Hello') {
             steps {
-             
+             // moving inside the screen and stop the python script
               sh"screen -S 5454.my_screen_session -X stuff '^c'"
               sh "screen -S my_screen -X stuff '^C'"
-              
+               
+            // moving inside the screen and start the python script
               sh "screen -S 5454.my_screen_session -X stuff 'python3 hello.py\\n'"
               sh "screen -S my_screen -X stuff 'python3 hlo.py\\n'"
              
