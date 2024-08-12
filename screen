@@ -28,6 +28,11 @@ pipeline {
 
 
 ==========================================================================================================
+Jenkins pipeline code for run the two-python script, inside the two different screens  
+We will create the screen manually.
+ []here screen name is 5454.my_screen_session (with ID) and my_screen (without ID) 
+ [] with or without ID both will work 
+
 
 pipeline {
     agent any
