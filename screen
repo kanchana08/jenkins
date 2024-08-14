@@ -82,7 +82,7 @@ pipeline {
                 
                 script {
                 
-                //sh 'sudo -u jenkins bash -c "screen -dmS myscreen "'
+
                 
                 sh 'screen -ls || true'
                 
