@@ -62,4 +62,49 @@ pipeline {
         } 
     }
 }
+====================================================================================================
+pipeline {
+    
+    agent any
+
+    stages {
+        stage(checkout){
+            steps{
+                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
+                
+            }
+            
+        }
+        
+        stage('Hello') {
+            
+            steps {
+                
+                script {
+                
+                //sh 'sudo -u jenkins bash -c "screen -dmS myscreen "'
+                
+                sh 'screen -ls || true'
+                
+                sh''' 
+                if ! sudo -u jenkins bash -c "screen -list | grep -q 'my_screen_session'";then 
+                    sudo -u jenkins bash -c "screen -dmS my_screen_session"
+                fi
+                if ! sudo -u jenkins bash -c "screen -list | grep -q 'mysession'";then 
+                    sudo -u jenkins bash -c "screen -dmS mysession"
+                fi
+                '''
+               
+               sh"screen -ls"
+               
+                   
+                
+                }
+            
+            }
+        }
+    }
+}
+
+
 
