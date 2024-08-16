@@ -1,33 +1,3 @@
-pipeline {
-    agent any
-   stages{
-        stage(checkout){
-            steps{
-                
-                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
-            }
-        }
-        stage(screen){
-            steps{
-                script{
-                    
-                    sh "screen -XS hello_session quit"
-                    sh"screen -XS hello_world_session quit"
-                    sh 'sudo -u jenkins bash -c "python3 screen_session.py "'
-                    sh "sudo -u jenkins screen -ls"
-                    
-                }
-                
-            }
-            
-        }
-       
-   }
-}            
-
-
-
-==========================================================================================================
 Jenkins pipeline code for run the two-python script, inside the two different screens  
 We will create the screen manually.
  []here screen name is 5454.my_screen_session (with ID) and my_screen (without ID) 
@@ -63,6 +33,11 @@ pipeline {
     }
 }
 ====================================================================================================
+creating screen, if screen is there it will ignore 
+
+
+
+
 pipeline {
     
     agent any
@@ -105,6 +80,66 @@ pipeline {
         }
     }
 }
+
+============================================================================================
+
+stage frist:  creating screen, if screen is there it will ignore 
+stage two : moving inside the screen, stop the screen and restart, modification will be update.
+
+
+pipeline {
+    
+    agent any
+
+    stages {
+        stage(checkout){
+            steps{
+                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
+                
+            }
+            
+        }
+        
+        stage('Hello') {
+            
+            steps {
+                
+                script {
+                sh''' 
+                
+                if ! sudo -u jenkins bash -c "screen -list | grep -q 'my_screen_session'";then 
+                    sudo -u jenkins bash -c "screen -dmS my_screen_session"
+                fi
+                if ! sudo -u jenkins bash -c "screen -list | grep -q 'my_screen_session2'";then 
+                    sudo -u jenkins bash -c "screen -dmS my_screen_session2"
+                fi
+                
+                '''
+                sh"screen -S my_screen_session -X stuff '^c'"
+                sh "screen -S my_screen_session2 -X stuff '^C'"
+                sh "screen -S my_screen_session -X stuff 'python3 hello.py\\n'"
+                sh "screen -S my_screen_session2 -X stuff 'python3 hlo.py\\n'"
+                sh 'screen -ls'
+                   
+                
+                }
+             
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
