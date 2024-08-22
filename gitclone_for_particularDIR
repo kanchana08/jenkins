@@ -25,7 +25,7 @@ pipeline {
 }
 
 ================================================================================================================================================
-using dir
+using ws
 [] it will clone the git repo in /var/opt/new (new means job name or we can give our folder name)
 
 pipeline {
