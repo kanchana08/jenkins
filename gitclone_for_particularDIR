@@ -47,6 +47,37 @@ pipeline {
     }
 }
 
+========================================================================================================
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Hello') {
+            steps { 
+               script{
+                    ws('/var/opt/new') {
+                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
+                }
+        }
+    }
+}
+    stage('zipfile') {
+            steps {  
+             script{
+                dir('/var/opt/pro') {
+                    sh'pwd'
+                    sh './script.sh'
+
+                }
+            }
+              
+        }
+    }    
+        
+    }
+}
+
 
 
 
