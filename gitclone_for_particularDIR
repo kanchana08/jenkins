@@ -1,4 +1,6 @@
 using dir
+dir will help to move particular path 
+
 [] it will clone the git repo in /var/opt/testing (teasting means job name or we can give our folder name)
 
 
