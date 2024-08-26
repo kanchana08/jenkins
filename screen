@@ -129,6 +129,58 @@ pipeline {
     }
 }
 
+===============================================================================================
+if any of one screen will delete, if build the job it will create the screen. 
+
+
+pipeline {
+    
+    agent any
+
+    stages {
+        stage(checkout){
+            steps{
+                git branch: 'main', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/testing.git'
+                
+            }
+            
+        }
+        
+        stage('Hello') {
+            
+            steps {
+                
+                script {
+                
+                 sh''' 
+                
+                if ! sudo -u jenkins bash -c "screen -list | grep -wq 'my_screen_session'";then 
+                    sudo -u jenkins bash -c "screen -dmS my_screen_session"
+                fi
+                '''
+                sh'''
+                if ! sudo -u jenkins bash -c "screen -list | grep -wq 'my_screen_session2'";then 
+                    sudo -u jenkins bash -c "screen -dmS my_screen_session2"
+                fi
+                
+                '''
+                sh"screen -S my_screen_session -X stuff '^c'"
+                sh "screen -S my_screen_session2 -X stuff '^C'"
+                sh "screen -S my_screen_session -X stuff 'python3 hello.py\\n'"
+                sh "screen -S my_screen_session2 -X stuff 'python3 hlo.py\\n'"
+                sh 'screen -ls'
+               
+                
+              
+                }
+             
+            }
+        }
+    }
+}
+
+
+
 
 
 
