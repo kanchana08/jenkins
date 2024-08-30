@@ -1,3 +1,6 @@
+install node js plugin and npm integration(optinal) plugins
+
+
 for angular(packege type) we need setup manege jenkins --> tool -->  NodeJS installations --> in name give whatever(ex = npm) --> in version mention which version node installed in server(check node -v) save
 in pipeline we should mention  tools {nodejs "npm"}  
 
