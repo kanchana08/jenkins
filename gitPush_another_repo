@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+    tools { nodejs "npm" }
+    stages {
+        stage('Checkout') {
+            steps {
+               git branch: 'master', credentialsId: 'GIT_PATH', url: 'https://github.com/kanchana08/angular.git'
+            }
+       }
+        stage('Build') {
+            steps {
+               sh 'npm install'
+                sh 'npm run ng build --prod'
+            }
+        }
+        stage('Push to Another Repository') {
+            steps {
+                script {
+                    dir('dist'){
+                    
+                    def branchName = "build-${env.BUILD_NUMBER}"
+                    
+                    withCredentials([usernamePassword(credentialsId: 'GIT_PATH', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                        
+                        sh "git remote remove target-repo || echo 'Remote target-repo does not exist, skipping remove.'"
+                        sh "git remote add target-repo https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/kanchana08/anguler_test.git"
+
+                        def isRepoEmpty = sh(script: "git ls-remote --heads target-repo", returnStatus: true) != 0
+                        
+                        if (isRepoEmpty) {
+                            
+                            sh "git checkout --orphan ${branchName}" 
+                            sh "echo '# Initial Commit' > README.md" 
+                            sh "git add README.md"
+                            sh "git commit -m 'Initial commit for ${branchName}'"
+                        } else {
+                            
+                            sh "git checkout -b ${branchName}"
+                        }
+                        
+                        
+                        sh "git add angular-build ."
+                        sh "git commit -m 'Build ${env.BUILD_NUMBER}' || true"
+                        
+                    
+                        sh "git push target-repo ${branchName}"
+                    }
+                }
+            }
+        }
+    
+        }     
+        }
+}
+
+
+
