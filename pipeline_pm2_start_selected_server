@@ -1,0 +1,125 @@
+
+using buildwithparameter (git branch list plugin)
+in job configure select thiis project parameterized, in that select git list and choise parameter  
+
+pipeline { 
+
+      agent none
+     tools {nodejs "npm"}
+
+    stages { 
+
+        stage('checkout') { 
+            agent {
+               label "${params.SLAVE}"
+           }
+
+           steps { 
+
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/karthickk/nest-ulrs.git', branch: "${params.FROMBRANCH.split('/').last()}"  
+              
+                } 
+        }    
+        stage('copy workspace code to main dir path') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                
+            sh " cp -rf /home/jenkins/workspace/nest-ulrs /var/opt/ "   
+           }
+        }
+       
+        stage('npm install ') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir(' /var/opt/nest-ulrs ') {
+
+                    sh " npm install -f"
+                    
+                 
+            }
+        }
+        }
+           stage('build'){
+        agent {
+               label "${params.SLAVE}"
+           }
+        steps{
+              dir('/var/opt/nest-ulrs') {
+            script {
+                   if (params.SLAVE == 'Dev-93') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'pluto.unidex') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'BeeLine') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'Alpha') {
+                       sh 'npm run build'
+               }
+            }
+         
+        }
+    }  
+       }
+         stage('pm2 start') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir('/var/opt/nest-ulrs') {
+                     script {
+                   if (params.SLAVE == 'Dev-93') {
+                        sh '''
+                    APP_NAME="ulrs-dev"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start devpluto-pm2.config.js
+                    fi
+                    '''
+                   } else if (params.SLAVE == 'pluto.unidex') {
+                         sh '''
+                    APP_NAME="ulrs-prod"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start prod.config.js
+                    fi
+                    ''' 
+                   } else if (params.SLAVE == 'BeeLine') {
+                        sh '''
+                    APP_NAME="prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart all
+                    else
+                      pm2 start beeline-pm2.config.js
+                    fi
+                    '''
+                   }  else if (params.SLAVE == 'Alpha') {
+                        sh '''
+                    APP_NAME="prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart all
+                    else
+                      pm2 start alpha-pm2.config.js
+                    fi
+                    '''
+                   }
+               }
+                  
+                    
+            }
+        }
+       
+        }  
+    }
+}
