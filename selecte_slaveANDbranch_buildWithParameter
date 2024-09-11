@@ -1,0 +1,33 @@
+move to job 
+[] configuration
+[]select this project parameterized 
+    [] in that select choice parameter
+        [] name :- SLAVE
+        [] choice: - give sarver names 
+[] in build with parameters we will get slave list, we can select in which server jenkins work         
+ [] like this way will mention in pipeline code label "${params.SLAVE}" 
+
+stages { 
+
+        stage('checkout') { 
+            agent {
+               label "${params.SLAVE}"
+           }
+
+           steps { 
+
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', url: 'https://git.kanchana.git', branch: "${params.FROMBRANCH.split('/').last()}"  
+              
+                } 
+        }    
+        stage('copy workspace code to main dir path') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                
+            sh " cp -rf /home/jenkins/workspace/nest-ulrs /var/opt/ "   
+           }
+        }
