@@ -1,0 +1,34 @@
+pipeline { 
+
+  agent {label 'ae.unidex.ai22'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+           git credentialsId: 'PAT', url: 'https://kanchanagm.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+          
+
+              } 
+
+         }  
+     stage("package install & build"){
+         steps{
+             sh "npm install"
+             sh "npm run build"
+         }
+     }
+      stage('Copy dist'){
+         steps{   
+             
+           
+             sh " cp -r dist/xtreme-admin-angular/* /var/www/html/FDT "
+         
+    }
+}
+     
+    }
+}    
