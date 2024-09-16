@@ -1,0 +1,157 @@
+for this we will create build with parameter. git list and choise parameter.
+
+
+
+
+
+pipeline {  
+
+  
+
+      agent none 
+
+      tools {nodejs "npm"} 
+
+  
+
+    stages {  
+
+  
+
+        stage('checkout') {  
+
+           agent { 
+
+               label "${params.SLAVE}" 
+
+           } 
+
+            steps {  
+
+  
+
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}"  
+
+  
+
+                git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/karthickk/ng-ulrs.git', branch: "${params.FROMBRANCH.split('/').last()}"  
+
+                 
+
+                }  
+
+        }     
+
+          
+
+    
+
+         
+
+        stage('installing packages') { 
+
+            agent { 
+
+               label "${params.SLAVE}" 
+
+           } 
+
+            steps{ 
+
+                 
+
+             sh "rm -rf node_modules && rm -rf package-lock.json" 
+
+              
+
+             sh " npm install -f" 
+
+               
+
+       }     
+
+    } 
+
+       stage('build'){ 
+
+        agent { 
+
+               label "${params.SLAVE}" 
+
+           } 
+
+        steps{ 
+
+             
+
+            script { 
+
+                   if (params.SLAVE == 'Dev-93') { 
+
+                       sh 'npm run build-dev' 
+
+                   } else if (params.SLAVE == 'pluto.unidex') { 
+
+                       sh 'npm run build' 
+
+                   } else if (params.SLAVE == 'BeeLine') { 
+
+                       sh 'npm run build-beeline' 
+
+                   } else if (params.SLAVE == 'Alpha') { 
+
+                       sh 'npm run build-alpha' 
+
+                   } 
+
+             } 
+
+  
+
+         
+
+    }   
+
+       } 
+
+        stage('Copy dist'){ 
+
+             agent { 
+
+               label "${params.SLAVE}" 
+
+           }  
+
+         steps{    
+
+              script { 
+
+                   if (params.SLAVE == 'Dev-93') { 
+
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/uniclose  " 
+
+                   } else if (params.SLAVE == 'pluto.unidex') { 
+
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs " 
+
+                   } else if (params.SLAVE == 'BeeLine') { 
+
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs " 
+
+                   } else if (params.SLAVE == 'Alpha') { 
+
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs " 
+
+                   } 
+
+               } 
+
+         } 
+
+    } 
+
+} 
+
+ } 
+ 
+ 
