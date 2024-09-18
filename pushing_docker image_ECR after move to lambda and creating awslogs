@@ -11,10 +11,10 @@ pipeline {
         stage('Cloning Git') {
             steps {
             
-                git branch: 'lambda_api', credentialsId: 'PAT', url: 'https://192.168.10.58/shashikiran.n/ida_automation_extraction.git'
-            } 
             
-        }
+    } 
+            
+}
         stage('AWS CLI Login') {
             steps {
               
