@@ -1,3 +1,8 @@
+copying one folder to anther folder  / jenkins have own workind directory /var/lib/jenkins/workspace but we want to clone differante directory so we go with copy 
+we need to create directory where we want to copy and give permission for that directory  chmod 777 directory.
+
+
+
 
 pipeline { 
 
