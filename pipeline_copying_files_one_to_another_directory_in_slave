@@ -1,0 +1,35 @@
+
+pipeline { 
+
+    agent {label 'windowsslave'}
+
+  stages { 
+
+    stage('Git checkout') { 
+
+       steps { 
+
+        
+
+       } 
+
+    }
+    stage('Copy Files') {
+      steps {
+         bat 'xcopy F:\\Jenkins\\workspace\\DEED_batch_processing\\*.* "D:\\APPS_IMPORT_EXPORT\\deed\\" /s /e /h /y' 
+      }
+    }
+     
+  } 
+  post{
+        failure{
+            mail to: "kanchanagm@stellaripl.com",
+            cc: "nadimpali.pradeepk@stellaripl.com",
+            subject: "jenkins build:${currentBuild.currentResult}: ${env.JOB_NAME}",
+            body: "${currentBuild.currentResult}: Job ${env.JOB_NAME}\nMore Info can be found here: ${env.BUILD_URL}"
+            
+        }
+    }
+}
+
+
