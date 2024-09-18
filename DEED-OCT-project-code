@@ -9,7 +9,7 @@ pipeline {
 
        steps { 
 
-        git branch: 'main', credentialsId: 'PAT', url: 'https://192.168.10.58/sangeetha.b/deed_batch_processing.git'
+        
 
        } 
 
