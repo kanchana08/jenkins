@@ -6,7 +6,7 @@ pipeline{
             steps{
                  echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
 
-                git credentialsId: 'PAT', url:'https://git.stldev.io:1305/team-members/ng-avr.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+                git credentialsId: 'PAT', , branch: "${params.FROMBRANCH.split('/').last()}" 
 
             }
         }
@@ -18,7 +18,7 @@ pipeline{
       }
         stage('deploy to /html path'){
            steps{
-              sh "cp -r dist/avr/browser/*  /var/www/html/avr-release"
+              sh "cp -r dist/avr/browr/*  /var/www/html/release"
           }
       }
       
