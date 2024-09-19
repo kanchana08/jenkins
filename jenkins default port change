@@ -1,0 +1,10 @@
+[] systemctl stop jenkins  /service jenkins stop
+[] vi /etc/default/jenkins
+    change port number in 
+               # port for HTTP connector (default 8080; disable with -1)
+               HTTP_PORT=8080 to HTTP_PORT=9090
+[] vi /lib/systemd/system/jenkins.service
+     change port number in
+      Environment="JENKINS_PORT=9090"
+[] systemctl daemon-reload.
+[] systemctl start jenkins.
