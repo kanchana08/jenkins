@@ -8,3 +8,11 @@
       Environment="JENKINS_PORT=9090"
 [] systemctl daemon-reload.
 [] systemctl start jenkins.
+
+
+[] jenkins
+[] manage jenkins 
+[] system
+[] Jenkins Location
+   []jenkins URL 
+     []change 8080 to 9090
