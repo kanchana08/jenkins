@@ -27,4 +27,5 @@ pipeline {
 }
 
 
-[] we need to configure, in manege jenkins select system, then select Global Pipeline Libraries, file the name, git repo and credentiales. 
+[] we need to configure, in manege jenkins select system, then select Global Pipeline Libraries, file the name
+,and in deafault version git master/main or branch and git repo and credentiales. 
