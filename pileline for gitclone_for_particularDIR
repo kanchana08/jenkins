@@ -1,6 +1,10 @@
 using dir
 dir will help to move particular path 
 
+[] we have to change ownership. sudo chown -R jenkins:jenkins /var/opt/screen/  (path where we want to clone)
+[] sudo chmod -R 755 /var/opt/screen/
+
+
 [] it will clone the git repo in /var/opt/testing (teasting means job name or we can give our folder name)
 
 pipeline {
