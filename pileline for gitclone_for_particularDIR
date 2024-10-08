@@ -31,6 +31,9 @@ pipeline {
 using ws
 [] it will clone the git repo in /var/opt/new (new means job name or we can give our folder name)
 
+[] we have to change ownership. sudo chown -R jenkins:jenkins /var/opt/screen/  (path where we want to clone)
+[] sudo chmod -R 755 /var/opt/screen/
+
 pipeline {
     agent any
     stages {
@@ -52,6 +55,9 @@ pipeline {
 }
 
 ========================================================================================================
+[] we have to change ownership. sudo chown -R jenkins:jenkins /var/opt/screen/  (path where we want to clone)
+[] sudo chmod -R 755 /var/opt/screen/
+
 
 pipeline {
     agent any
