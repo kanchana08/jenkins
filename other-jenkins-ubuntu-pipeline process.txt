@@ -1,0 +1,28 @@
+Jenkins Pipeline Procedure
+
+Login to jenkins 
+In Dashboard click on New Item --> Select Freestyle Project-->Select Configure
+In Configure Goto Source Code Management --> Select the git repository-->add the details provided ,for credentials u need to github/gitlab repository credentials
+
+Goto Build triggers -->select Poll SCM -->set the cronjob for 1 minute
+Goto Build steps -->For Ubuntu/Linux select execute shell option ,add the shell command echo "clone" --to check it is cloning the code properly 
+Goto Post Build Actions --> Editable Email notification --> edit Project recipients with email ids -->select attach build logs,add attach buildlog
+Goto Advanced Settings -->Goto Triggers -->Add Triggers -->add Always and SAVE the pipeline
+
+Once saved the above, Click on Build Now option ,once build is done u can check it in Console output whether it is success or Failure.
+
+
+Configurations in Ubuntu Server
+
+Goto .ssh file of the server ,cat id_rsa.pub copy the file and paste it in /var/lib/jenkins/.ssh/known_hosts
+similarly copy the /var/lib/jenkins/.ssh copy cat id_rsa.pub file of jenkins to server .ssh known_hosts file.
+
+once it is done u need to execute two commands for code present/folder present in /var/www/html path firstly,
+for example scp -r /var/lib/jenkins/workspace/fastpostdevops sipl4130@135.148.55.73:/var/www/html/FastTcloseproject/
+sudo chmod -R 777 /var/www/html/FastTcloseproject/
+sshpass -p "Modern@098" scp -r /var/lib/jenkins/workspace/fastpostdevops sipl4130@135.148.55.73:/var/www/html/FastTcloseproject/
+after getting executed the above commands , keep the same commands in Goto Build steps -->For Ubuntu/Linux select execute shell option,paste here and Save the pipeline and build it.
+The above mentioned is for example purpose u need to change path the folders accordingly.
+U need to manually during first time when it is done,it will run automatically. u need to add the commands accordingly.
+
+
