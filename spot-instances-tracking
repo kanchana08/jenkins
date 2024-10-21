@@ -88,3 +88,114 @@ if __name__ == "__main__":
             print(instance)
     else:
         print("No terminated Spot instances found.")
+
+
+
+
+
+
+
+=============================================================
+including region
+
+
+import boto3
+import csv
+from datetime import datetime, timezone
+import pytz
+ 
+def format_run_duration(duration):
+	total_seconds = int(duration.total_seconds())
+	days, remainder = divmod(total_seconds, 86400)  # 86400 seconds in a day
+	hours, remainder = divmod(remainder, 3600)      # 3600 seconds in an hour
+	minutes, seconds = divmod(remainder, 60)        # 60 seconds in a minute
+ 
+	return f"{days} days, {hours} hours, {minutes} minutes"
+ 
+def get_all_regions():
+	ec2 = boto3.client('ec2')
+	response = ec2.describe_regions()
+	return [region['RegionName'] for region in response['Regions']]
+ 
+def get_terminated_spot_instances(region):
+	# Create a session using your AWS credentials
+	session = boto3.Session()
+	ec2 = session.client('ec2', region_name=region)
+ 
+	# Retrieve all instances
+	response = ec2.describe_instances()
+ 
+	# List to hold information about terminated Spot instances
+	terminated_spot_instances_info = []
+ 
+	# Set timezone to IST
+	ist = pytz.timezone('Asia/Kolkata')
+ 
+	# Iterate through all reservations and instances
+	for reservation in response['Reservations']:
+		for instance in reservation['Instances']:
+			# Check if the instance is terminated and is a Spot instance
+			if instance['State']['Name'] == 'terminated' and instance.get('InstanceLifecycle') == 'spot':
+				instance_id = instance['InstanceId']
+				instance_type = instance['InstanceType']
+				launch_time = instance['LaunchTime'].replace(tzinfo=pytz.utc)
+ 
+				# Convert launch time to a string in IST
+				launch_time_str = launch_time.astimezone(ist).isoformat()
+ 
+				terminated_time = datetime.strptime(instance['StateTransitionReason'].split('(')[-1].strip(')'),'%Y-%m-%d %H:%M:%S %Z') 
+				terminated_ftime = terminated_time.astimezone(pytz.utc)
+				run_duration = terminated_ftime - launch_time_str
+ 
+				# Format the run duration
+				run_duration_str = format_run_duration(run_duration)
+				# Get instance status
+				instance_status = instance['State']['Name']
+ 
+				# Store instance info in the desired format
+				terminated_spot_instances_info.append({
+					'Region': region,
+					'SFR': 'Spot',  # Indicating it's a Spot instance
+					'Datetime': datetime.now(timezone.utc).isoformat(),
+					'Instance Type': instance_type,
+					'Instance ID': instance_id,
+					'Launch Time': launch_time_str,  # Add launch time here
+					'Status': instance_status,
+					'Run Duration (days, hours, minutes)': run_duration_str
+				})
+ 
+	# Save the terminated Spot instances to a CSV file
+	save_to_csv(terminated_spot_instances_info)
+ 
+	return terminated_spot_instances_info
+ 
+def save_to_csv(instances_info):
+	file_path = 'terminated_spot_instances.csv'
+	fieldnames = ['Region', 'SFR', 'Datetime', 'Instance Type', 'Instance ID', 'Launch Time', 'Status', 'Run Duration (days, hours, minutes)']
+ 
+	# Append to CSV if it exists, otherwise create it
+	with open(file_path, mode='a', newline='') as csvfile:
+		writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+ 
+		# Write header only if the file is new
+		if csvfile.tell() == 0:
+			writer.writeheader()
+ 
+		# Write instance info
+		for instance in instances_info:
+			writer.writerow(instance)
+ 
+if __name__ == "__main__":
+	regions = get_all_regions()
+	terminated_spot_instances = []
+ 
+	for region in regions:
+		instances = get_terminated_spot_instances(region)
+		terminated_spot_instances.extend(instances)
+ 
+	# Print the results
+	if terminated_spot_instances:
+		for instance in terminated_spot_instances:
+			print(instance)
+	else:
+		print("No terminated Spot instances found.")
