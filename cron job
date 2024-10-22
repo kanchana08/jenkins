@@ -6,14 +6,9 @@ The ‘Crontab’ Linux Command goes on to check the time on the device and when
 
 command:
 [] crontab -e   ----> it will move inside the cron file.
-first we need to create shell script for this, in that script we will mention execution commands 
 
-  [] crontab -e 
+[] crontab -e 
  in this file we will mention the automation timings and shell script path 
   ex: * * * * * /var/opt/example.sh  (it means every minut it will execute the shell script)
 
-  [] cat /var/opt/example.sh
-  #! /bin/bash
-  cd /var/opt
-  zip zipfile.zip /var/opt/crontest/*
-  
+
