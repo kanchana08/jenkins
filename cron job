@@ -1,0 +1,19 @@
+crontab:
+If you want any job or work to be scheduled on your Linux or Unix Operation System,
+then the Linux ‘Crontab’ Command will be a popular one. The ‘Crontab’ Command on Linux works in the system’s background.
+The ‘Crontab’ Linux Command goes on to check the time on the device and when a particular time arrives, it performs pre-defined tasks automatically.
+
+
+command:
+[] crontab -e   ----> it will move inside the cron file.
+first we need to create shell script for this, in that script we will mention execution commands 
+
+  [] crontab -e 
+ in this file we will mention the automation timings and shell script path 
+  ex: * * * * * /var/opt/example.sh  (it means every minut it will execute the shell script)
+
+  [] cat /var/opt/example.sh
+  #! /bin/bash
+  cd /var/opt
+  zip zipfile.zip /var/opt/crontest/*
+  
