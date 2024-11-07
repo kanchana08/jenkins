@@ -1,1 +1,39 @@
+if we get error to install npm like.
+
+sudo apt install npm
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Some packages could not be installed. This may mean that you have
+requested an impossible situation or if you are using the unstable
+distribution that some required packages have not yet been created
+or been moved out of Incoming.
+The following information may help to resolve the situation:
+
+The following packages have unmet dependencies:
+ npm : Depends: node-agent-base but it is not going to be installed
+       Depends: node-aproba but it is not going to be installed
+       Depends: node-archy but it is not going to be installed
+       Depends: node-cacache but it is not going to be installed
+       Depends: node-chalk but it is not going to be installed
+       Depends: node-cli-table3
+       Depends: node-colors but it is not going to be installed
+       Depends: node-columnify but it is not going to be installed
+       Depends: node-debug but it is not going to be installed
+       Depends: node-emoji-regex
+
+
+[] commands to solve.
+
+[]sudo apt remove --purge nodejs npm
+[]sudo apt autoremove
+[]curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+[]sudo apt install nodejs
+[]node -v
+[]npm -v
+
+
+
+
+
 
