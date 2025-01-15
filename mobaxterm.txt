@@ -1,0 +1,8 @@
+[]session
+[]new session
+[]SSh
+[]in remote ssh : - jenkins ip
+[]port 3265
+[]useername: jenkins
+[]password:ida@#2022
+[]bash
