@@ -1,0 +1,31 @@
+if we get npm installation issues
+
+like: npm ERR! code ENOTEMPTY
+      npm ERR! syscall rename 
+      npm ERR! code ENOTEMPTY: directory not empty
+
+[] go to server 
+[] go to particular path
+[] check npm install  becouse if it run in server. after build the job again it will get success again.
+[] in server also we get same error
+[] npm cache clear --force   
+[] rm -rf /home/jenkins/worcspace/ng-fdt/node_moduls
+[] rm -rf /home/jenkins/worcspace/ng-fdt/package_lock.json
+[] npm install 
+
+
+to restart the jenkins dashboad  http//192.169.10.51:9191/restart.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
