@@ -1,0 +1,10 @@
+to install jenkins 
+[] frist we have go jenkins.io officeal web (there we can find jenkins installation command)
+[] download 
+[] select LTS
+[] select ubuntu
+[] in server first install java and latter install jenkins
+
+[] after getting dashboard install basic plugin of git parameter etc..
+[] in server we should install git for git clone 
+ 
