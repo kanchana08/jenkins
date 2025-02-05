@@ -3,8 +3,12 @@ to install jenkins
 [] download 
 [] select LTS
 [] select ubuntu
-[] in server first install java and latter install jenkins
-
+[] in server first install java and latter install jenkins follow the commands.
+after installing jenkins. 1).systemctl enable jenkins and 2) systemctl start jenkins 
+[] then go to browser give localhost:8080 or publicip:8080
+[] we will get var/lib/jenkins/secrete/initianadmen
+[] copy paste in server like cat var/lib/jenkins/secrete/initianadmen
+[] we will get one password copy paste in dashboard.
 [] after getting dashboard install basic plugin of git parameter etc..
 [] in server we should install git for git clone 
  
