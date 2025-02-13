@@ -1,3 +1,10 @@
+
+for this we should selecte build with parameter
+
+
+
+
+
 [] build after otherjob build. when the job1 build success it will build job2 automatically. which branch selected in job1 it will take same branch for job2.
 for two different repo, i have to mentain same branch name then only it will work.
 
@@ -98,3 +105,87 @@ pipeline {
 For selecting slave when the job1 build success it will build job2 automatically. which slave selected in job1 it will take same slave for job2.
 and  (to selecte particular slave in job2, in build with parameter we have to mention which slave we want to build, manually we have to mention)
 
+
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'AGENT_TYPE', choices: ['dev', 'pro'], description: 'Select the environment to run the job')
+    
+    }
+
+    stages {
+        stage('Push to GitHub') {
+            steps {
+                script {
+                    echo "User selected branch is ${params.FROMBRANCH.split('/').last()}"
+
+                git credentialsId: 'gitpath', url: 'https://github.com/kanchana08/docker-compose-sample.git', branch: "${params.FROMBRANCH.split('/').last()}"
+           
+                }
+            }
+        }
+
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+
+    post {
+        success {
+            // Pass the selected branch and agent type as parameters to job2
+            build job: 'test2', propagate: false, parameters: [
+                string(name: 'BRANCH_NAME', value: "${params.FROMBRANCH.split('/').last()}"),
+                string(name: 'AGENT_TYPE', value: "${params.AGENT_TYPE}")
+            ]
+        }
+    }
+}
+
+
+
+job2:
+
+
+pipeline {
+    agent {
+        label "${params.AGENT_TYPE}"
+    }
+
+    parameters {
+        string(name: 'BRANCH_REPO_URL', defaultValue: 'https://github.com/kanchana08/test.git', description: 'Repository URL')
+        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Branch name passed from Job 1 (optional)')
+        string(name: 'FROMBRANCH', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
+        string(name: 'AGENT_TYPE', defaultValue: '', description: 'Agent type passed from Job 1')
+    }
+
+    stages {
+        stage('Checkout Branch') {
+            steps {
+                script {
+                    def branchToCheckout
+
+                    if (params.BRANCH_NAME) {
+                        branchToCheckout = params.BRANCH_NAME
+                        echo "Checking out branch passed from Job 1: ${branchToCheckout}"
+                    } else if (params.FROMBRANCH) {
+                        branchToCheckout = params.FROMBRANCH.split('/').last()
+                        echo "Checking out branch selected manually: ${branchToCheckout}"
+                    } else {
+                        error "Either BRANCH_NAME (from Job 1) or FROMBRANCH must be specified."
+                    }
+
+                    git credentialsId: 'gitpath', url: params.BRANCH_REPO_URL, branch: branchToCheckout
+                }
+            }
+        }
+
+         stage('Run on Agent') {
+            steps {
+                echo "Running on agent of type: ${params.AGENT_TYPE}"
+            }
+        }
+    }
+}
