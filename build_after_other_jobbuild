@@ -1,0 +1,55 @@
+
+job1:
+
+pipeline {
+    agent any
+
+    stages {
+        stage('Push to GitHub') {
+            steps {
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}"
+
+                git credentialsId: 'gitpath', url: 'https://github.com/kanchana08/docker-compose-sample.git', branch: "${params.FROMBRANCH.split('/').last()}"
+            }
+        }
+    
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+    
+    post {
+        success {
+            // Pass the selected branch as a parameter to job2
+            build job: 'test2', propagate: false, parameters: [
+                string(name: 'BRANCH_NAME', value: "${params.FROMBRANCH.split('/').last()}")
+            ]
+        }
+    }
+}
+
+
+job2:
+
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BRANCH_REPO_URL', defaultValue: 'https://github.com/kanchana08/test.git', description: 'Repository URL')
+         
+    }
+
+    stages {
+        stage('Checkout Branch') {
+            steps {
+                script {
+                    // Checkout the branch passed from job1
+                    git branch: "${params.BRANCH_NAME}", credentialsId: 'gitpath', url: params.BRANCH_REPO_URL
+                }
+            }
+        }
+    }
+}
