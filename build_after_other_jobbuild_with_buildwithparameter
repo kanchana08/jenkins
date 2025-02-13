@@ -60,6 +60,11 @@ pipeline {
 
 job2:(to selecte particular branch in job2, in build with parameter we have to mention which branch we want to build, manually we have to mention git branches)
 
+
+
+
+
+
 pipeline {
     agent any
 
@@ -90,4 +95,6 @@ pipeline {
 
 
 
-For selecting b
+For selecting slave when the job1 build success it will build job2 automatically. which slave selected in job1 it will take same slave for job2.
+and  (to selecte particular slave in job2, in build with parameter we have to mention which slave we want to build, manually we have to mention)
+
