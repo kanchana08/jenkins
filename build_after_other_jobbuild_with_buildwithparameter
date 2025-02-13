@@ -1,3 +1,6 @@
+[] build after otherjob build. when the job1 build success it will build job2 automatically. which branch selected in job1 it will take same branch for job2.
+for two different repo, i have to mentain same branch name then only it will work.
+
 
 job1:
 
@@ -55,15 +58,14 @@ pipeline {
 }
 
 
-job2:(to selecte particular branch)
+job2:(to selecte particular branch in job2, in build with parameter we have to mention which branch we want to build, manually we have to mention git branches)
 
 pipeline {
     agent any
 
     parameters {
         string(name: 'BRANCH_REPO_URL', defaultValue: 'https://github.com/kanchana08/test.git', description: 'Repository URL')
-        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Branch name passed from Job 1 (optional)')
-        string(name: 'FROMBRANCH', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
+        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
     }
 
     stages {
@@ -75,11 +77,8 @@ pipeline {
                     if (params.BRANCH_NAME) {
                         branchToCheckout = params.BRANCH_NAME
                         echo "Checking out branch passed from Job 1: ${branchToCheckout}"
-                    } else if (params.FROMBRANCH) {
-                        branchToCheckout = params.FROMBRANCH.split('/').last()
-                        echo "Checking out branch selected manually: ${branchToCheckout}"
                     } else {
-                        error "Either BRANCH_NAME (from Job 1) or FROMBRANCH must be specified."
+                        error "A branch (BRANCH_NAME) must be specified."
                     }
 
                     git credentialsId: 'gitpath', url: params.BRANCH_REPO_URL, branch: branchToCheckout
@@ -88,3 +87,7 @@ pipeline {
         }
     }
 }
+
+
+
+For selecting b
