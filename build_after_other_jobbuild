@@ -53,3 +53,38 @@ pipeline {
         }
     }
 }
+
+
+job2:(to selecte particular branch)
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BRANCH_REPO_URL', defaultValue: 'https://github.com/kanchana08/test.git', description: 'Repository URL')
+        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Branch name passed from Job 1 (optional)')
+        string(name: 'FROMBRANCH', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
+    }
+
+    stages {
+        stage('Checkout Branch') {
+            steps {
+                script {
+                    def branchToCheckout
+
+                    if (params.BRANCH_NAME) {
+                        branchToCheckout = params.BRANCH_NAME
+                        echo "Checking out branch passed from Job 1: ${branchToCheckout}"
+                    } else if (params.FROMBRANCH) {
+                        branchToCheckout = params.FROMBRANCH.split('/').last()
+                        echo "Checking out branch selected manually: ${branchToCheckout}"
+                    } else {
+                        error "Either BRANCH_NAME (from Job 1) or FROMBRANCH must be specified."
+                    }
+
+                    git credentialsId: 'gitpath', url: params.BRANCH_REPO_URL, branch: branchToCheckout
+                }
+            }
+        }
+    }
+}
