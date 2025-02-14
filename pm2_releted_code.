@@ -1,0 +1,345 @@
+pm2 (Process Manager 2)
+[]PM2 will work with a **NestJS/nodejs application**, nest/nodejs is backend applications.
+[] in jenkins we have to install node js plugin and npm integration(optinal) plugins
+
+[] in jenkins we need setup, go to manegejenkins --> tool -->  NodeJS installations --> in name give whatever(ex = npm) --> in version mention which version node was installed. in server(check node -v) save
+in pipeline we should mention  tools {nodejs "npm"} 
+
+below code we help to manage two proccess 
+
+pipeline { 
+
+  agent {label '1223'}  -----> (this for particular slave)
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+             dir('/var/opt/anr_api') { ------------> (git clone in particular dir)
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" -  --------------> ( we are using build with parameret)
+               git credentialsId: 'PAT', url: 'https://git.kanchana.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+             }
+
+              } 
+
+         }  
+     stage("package install & build"){
+         steps{
+             dir('/var/opt/anr_api') {
+             sh "npm install -f"
+             sh "npm run build"
+         }
+        }
+     }
+     
+      stage('pm2 start'){
+          steps{
+             dir('/var/opt/anr_api') {
+                  script {
+                     sh '''
+        PRIMARY_APP="prod-anr-primary"  ------------( **Variables Initialization**:)
+        REPLICA_APP="prod-anr-replica"  ------------( **Variables Initialization**:)
+        
+        # Restart primary app if running, or start it if not
+        if pm2 describe $PRIMARY_APP > /dev/null; then
+            pm2 restart $PRIMARY_APP
+        else
+            pm2 start anr.config.js 
+        fi
+
+        # Restart replica app if running, or start it if not
+        if pm2 describe $REPLICA_APP > /dev/null; then
+            pm2 restart $REPLICA_APP
+        else
+            pm2 start anr.config.js 
+        fi
+    '''
+             }
+             } 
+         }
+       }
+    }
+}    
+================================================================================
+[]for below code we are using build with parameter to select particular branches  and slave. for that in job confugure we selected git parameter and choice parameter. 
+[] code will work like it will run selected slave 
+
+pipeline{
+    agent none
+    tools {nodejs "npm"}
+    stages{
+        stage('Git Checkout'){
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                 echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', kachana.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+            }
+        }
+        stage('Copy to  Opt') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                sh " cp -rf /home/jenkins/workspace/nest-avr /var/opt "
+            }
+        }
+        stage('npm package install and build'){
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                 dir('/var/opt/nest-avr') {
+                  
+                    
+                    sh " npm install "
+                
+                 }
+            }     
+        }
+        stage('build'){
+          agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+              dir('/var/opt/nest-avr') {
+               script {
+                   if (params.SLAVE == 'Dev-143') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'Server125') {
+                       sh 'npm run build'
+                   }
+         }
+           
+        }  
+       }
+   }
+             stage('pm2 start') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir('/var/opt/nest-avr') {
+                     script {
+                   if (params.SLAVE == 'Dev-143') {
+                        sh '''
+                    APP_NAME="avr-prod"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start prod.config.js
+                    fi
+                    '''
+                   } else if (params.SLAVE == 'Server125') {
+                         sh '''
+                    APP_NAME="avr-prod"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start prod.config.js
+                    fi
+                    '''
+                   }
+                     }
+                  }
+            }
+             }
+  }
+}
+=============================================================
+this will search the app name when the app is there then only pm2 will work.
+
+
+
+
+ 
+pipeline { 
+
+  agent {label 'Dev-93'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+             dir('/var/opt/nest-county-search') {
+             echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+           git credentialsId: 'PAT', url: 'https://git.kanchana.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+             }
+
+              } 
+
+         }  
+          
+     stage("package install & build"){
+         steps{
+              dir('/var/opt/nest-county-search') {
+
+             sh "npm install"
+          //   sh "npx prisma generate"
+             sh "npm run build"
+              }
+         }
+     }
+      stage("pm2 service"){
+         steps{
+              dir('/var/opt/nest-county-search') {
+                  script {
+                        sh '''
+                    APP_NAME="county-search-prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start prod.config.js
+                    fi
+                    '''
+                  }
+              }  
+         }
+     }
+    }
+}
+
+========================================================================
+
+below code for multiple slave (for slave we should go the choice parameter, there only we will mention list of server)
+
+pipeline { 
+
+      agent none
+     tools {nodejs "npm"}
+
+    stages { 
+
+        stage('checkout') { 
+            agent {
+               label "${params.SLAVE}"
+           }
+
+           steps { 
+                dir ('/var/opt/nest-ulrs'){
+
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/karthickk/nest-ulrs.git', branch: "${params.FROMBRANCH.split('/').last()}"  
+              
+                } 
+           }
+        }    
+       
+        stage('npm install ') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir('/var/opt/nest-ulrs'){
+
+                    sh " npm install -f"
+                    sh "pwd"
+                 
+            }
+        }
+        }
+           stage('build'){
+        agent {
+               label "${params.SLAVE}"
+           }
+        steps{
+              dir('/var/opt/nest-ulrs') {
+            script {
+                   if (params.SLAVE == 'Dev-93') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'pluto') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'BeeLine') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'Alpha') {
+                       sh 'npm run build'
+                   } else if (params.SLAVE == 'CTC') {
+                       sh 'npm run build'
+               }
+            }
+         
+        }
+    }  
+       }
+         stage('pm2 start') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir('/var/opt/nest-ulrs') {
+                     script {
+                   if (params.SLAVE == 'Dev-93') {
+                        sh '''
+                    APP_NAME="ulrs-dev"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start devpluto-pm2.config.js
+                    fi
+                    '''
+                   } else if (params.SLAVE == 'pluto') {
+                         sh '''
+                    APP_NAME="uniclose-dev"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start pluto.unidex-pm2.config.js
+                    fi
+                    ''' 
+                   } else if (params.SLAVE == 'BeeLine') {
+                        sh '''
+                    APP_NAME="prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart all
+                    else
+                      pm2 start beeline-pm2.config.js
+                    fi
+                    '''
+                   }  else if (params.SLAVE == 'Alpha') {
+                        sh '''
+                    APP_NAME="prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart all
+                    else
+                      pm2 start alpha-pm2.config.js
+                    fi
+                    '''
+                   }  else if (params.SLAVE == 'CTC') {
+                        sh '''
+                    APP_NAME="prod-primary"
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart all
+                    else
+                      pm2 start ctc-pm2.config.js
+                    fi
+                    '''
+                   }
+               }
+                  
+                    
+            }
+        }
+       
+        }  
+    }
+}
+
+
