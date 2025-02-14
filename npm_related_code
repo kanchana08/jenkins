@@ -1,0 +1,132 @@
+npm Node (package manager)
+to run application we should install nginx in server .then only will get war/www/html file path  
+
+[]npm will work with a **angular applications** is frontend applications.
+[] in jenkins we have to install node js plugin and npm integration(optinal) plugins
+
+[] in jenkins we need setup, go to manegejenkins --> tool -->  NodeJS installations --> in name give whatever(ex = npm) --> in version mention which version node was installed. in server(check node -v) save
+in pipeline we should mention  tools {nodejs "npm"} 
+
+[] using npm . frist we will clone the code , second install the npm and build , and then copy the dist folder to html.
+
+pipeline { 
+
+  agent {label 'ae.unidex.ai22'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+              git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/ng-fdt.git', branch: "${params.FROMBRANCH.split('/').last()}"   
+
+            
+
+              } 
+
+         }  
+     stage("package install & build"){
+         steps{
+          //   sh "rm -rf node_modules && rm -rf package-lock.json"
+             sh "npm install"
+             
+             sh "npm run build-anr"
+         }
+     }
+     stage("Deploying dist to HTML path"){
+         steps{
+             sh " cp -r dist/xtreme-admin-angular/* /var/www/html/ANR "
+          
+         
+         }
+     }
+    }
+}
+
+=========================================
+for multiple slave : below code for multiple slave (for slave we should go the choice parameter, there only we will mention list of server)
+
+pipeline { 
+
+      agent none
+      tools {nodejs "npm"}
+
+    stages { 
+
+        stage('checkout') { 
+           agent {
+               label "${params.SLAVE}"
+           }
+            steps { 
+
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/karthickk/ng-ulrs.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+                
+                } 
+        }    
+         
+   
+        
+        stage('installing packages') {
+            agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                
+             sh "rm -rf node_modules && rm -rf package-lock.json"
+             
+             sh " npm install -f"
+              
+       }    
+    }
+       stage('build'){
+        agent {
+               label "${params.SLAVE}"
+           }
+        steps{
+            
+            script {
+                   if (params.SLAVE == 'Dev-93') {
+                       sh 'npm run build-dev'
+                   } else if (params.SLAVE == 'pluto') {
+                       sh 'npm run build-pluto'
+                   } else if (params.SLAVE == 'BeeLine') {
+                       sh 'npm run build-beeline'
+                   } else if (params.SLAVE == 'Alpha') {
+                       sh 'npm run build-alpha'
+                   } else if (params.SLAVE == 'CTC') {
+                       sh 'npm run build-ctc'
+                   }
+             }
+
+        
+    }  
+       }
+        stage('Copy dist'){
+             agent {
+               label "${params.SLAVE}"
+           } 
+         steps{   
+              script {
+                   if (params.SLAVE == 'Dev-93') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/uniclose  "
+                   } else if (params.SLAVE == 'pluto') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'BeeLine') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'Alpha') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'CTC') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   }
+               }
+         }
+    }
+}
+
+}
+
+
