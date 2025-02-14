@@ -1,0 +1,135 @@
+npm (node package manager)
+
+to run application in browser we have to install nginx/apache then only we will get war/www/html file path.
+
+[]npm  will work with a **angular application**,its frontend applications.
+[] in jenkins we have to install node js plugin and npm integration(optinal) plugins
+
+[] in jenkins we need setup, go to manegejenkins --> tool -->  NodeJS installations --> in name give whatever(ex = npm) --> in version mention which version node was installed. in server(check node -v) save
+in pipeline we should mention  tools {nodejs "npm"} 
+
+1st we will clone the code. 2nd npm install and build. 3rd copy the dist folder to htlm path 
+
+pipeline { 
+
+  agent {label 'Server-81'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+              git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/saiyyadfatesh/ng-order-management.git', branch: "${params.FROMBRANCH.split('/').last()}"   
+
+            
+
+              } 
+
+         }  
+     stage("package install & build"){
+         steps{
+          //   sh "rm -rf node_modules && rm -rf package-lock.json"
+             sh "npm install"
+             sh " npm i @esbuild/linux-x64"
+             sh "npm run build-ctc"
+         }
+     }
+     stage("Deploying dist to HTML path"){
+         steps{
+             sh " cp -r dist/ORM/browser/* /var/www/html/ctcportal "
+         
+         }
+     }
+    }
+}
+
+
+=================================
+for multiple slave : below code for multiple slave (for slave we should go the choice parameter, there only we will mention list of server)
+[]for below code we are using build with parameter to select particular branches  and slave. for that in job confugure we selected git parameter and choice parameter. 
+[] code will work like it will run selected slave
+
+pipeline { 
+
+      agent none
+      tools {nodejs "npm"}
+
+    stages { 
+
+        stage('checkout') { 
+           agent {
+               label "${params.SLAVE}"
+           }
+            steps { 
+
+                echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+
+                git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/karthickk/ng-ulrs.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+                
+                } 
+        }    
+         
+   
+        
+        stage('installing packages') {
+            agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                
+             sh "rm -rf node_modules && rm -rf package-lock.json"
+             
+             sh " npm install -f"
+              
+       }    
+    }
+       stage('build'){
+        agent {
+               label "${params.SLAVE}"
+           }
+        steps{
+            
+            script {
+                   if (params.SLAVE == 'Dev-93') {
+                       sh 'npm run build-dev'
+                   } else if (params.SLAVE == 'pluto') {
+                       sh 'npm run build-pluto'
+                   } else if (params.SLAVE == 'BeeLine') {
+                       sh 'npm run build-beeline'
+                   } else if (params.SLAVE == 'Alpha') {
+                       sh 'npm run build-alpha'
+                   } else if (params.SLAVE == 'CTC') {
+                       sh 'npm run build-ctc'
+                   }
+             }
+
+        
+    }  
+       }
+        stage('Copy dist'){
+             agent {
+               label "${params.SLAVE}"
+           } 
+         steps{   
+              script {
+                   if (params.SLAVE == 'Dev-93') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/uniclose  "
+                   } else if (params.SLAVE == 'pluto') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'BeeLine') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'Alpha') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   } else if (params.SLAVE == 'CTC') {
+                          sh " cp -r dist/ulrs/browser/* /var/www/html/ulrs "
+                   }
+               }
+         }
+    }
+}
+
+}
+
+
