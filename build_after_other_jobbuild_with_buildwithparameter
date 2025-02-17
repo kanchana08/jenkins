@@ -156,9 +156,10 @@ pipeline {
 
     parameters {
         string(name: 'BRANCH_REPO_URL', defaultValue: 'https://github.com/kanchana08/test.git', description: 'Repository URL')
-        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Branch name passed from Job 1 (optional)')
-        string(name: 'FROMBRANCH', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
-        string(name: 'AGENT_TYPE', defaultValue: '', description: 'Agent type passed from Job 1')
+        
+        string(name: 'BRANCH_NAME', defaultValue: '', description: 'Select a branch if not triggered by Job 1')
+        
+        choice(name: 'AGENT_TYPE', choices: [' ','div', 'pro'], description: 'Select the environment to run the job')
     }
 
     stages {
@@ -189,3 +190,4 @@ pipeline {
         }
     }
 }
+
