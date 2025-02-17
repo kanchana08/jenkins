@@ -1,10 +1,6 @@
 
 for this we should selecte build with parameter
 
-
-
-
-
 [] build after otherjob build. when the job1 build success it will build job2 automatically. which branch selected in job1 it will take same branch for job2.
 for two different repo, i have to mentain same branch name then only it will work.
 
@@ -99,8 +95,6 @@ pipeline {
         }
     }
 }
-
-
 
 For selecting slave when the job1 build success it will build job2 automatically. which slave selected in job1 it will take same slave for job2.
 and  (to selecte particular slave in job2, in build with parameter we have to mention which slave we want to build, manually we have to mention)
