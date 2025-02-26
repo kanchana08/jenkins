@@ -1,0 +1,71 @@
+pipeline {
+    agent none
+
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['server1', 'uat', 'prod'], description: 'Select the environment')
+        string(name: 'TRIGGERING_USER', defaultValue: '', description: 'User ID of the person triggering the build')
+    }
+
+    stages {
+        stage('Debug Info') {
+            steps {
+                script {
+                    // Print all environment variables to debug
+                    echo "Current Environment Variables: ${env}"
+                }
+            }
+        }
+        
+        stage('Restrict Access') {
+            steps {
+                script {
+                    // Use the provided parameter if the environment variable isn't set
+                    def currentUserId = env.BUILD_USER_ID ?: params.TRIGGERING_USER
+                    echo "Current User ID: ${currentUserId}"
+
+                    if (currentUserId == null || currentUserId.isEmpty()) {
+                        error "Unable to determine the current user. Please ensure the build was triggered by a user or provide a user ID."
+                    }
+
+                    // Define environment-user mapping
+                    def allowedEnvironments = [
+                        'user1': ['server1'],
+                        'user2': ['uat'],
+                        'user3': ['prod']
+                    ]
+
+                    // Check if the current user has permission for the selected environment
+                    if (!allowedEnvironments.containsKey(currentUserId) || 
+                        !allowedEnvironments[currentUserId].contains(params.ENVIRONMENT)) {
+                        error "User ${currentUserId} is not authorized to run this job on '${params.ENVIRONMENT}'."
+                    }
+                    
+                    echo "Access granted for user ${currentUserId} to '${params.ENVIRONMENT}'."
+                }
+            }
+        }
+
+        stage('Checkout and Build') {
+            agent {
+                label getAgentLabelForUser(env.BUILD_USER_ID ?: params.TRIGGERING_USER)
+            }
+            steps {
+                echo "Running pipeline for environment: ${params.ENVIRONMENT}"
+                // Add your build steps here for the specified environment
+            }
+        }
+    }
+}
+
+def getAgentLabelForUser(currentUserId) {
+    switch (currentUserId) {
+        case 'user1':
+            return 'server1'
+        case 'user2':
+            return 'test'
+        case 'user3':
+            return 'prod'
+        default:
+            error "User ${currentUserId} does not have an assigned agent."
+    }
+}
