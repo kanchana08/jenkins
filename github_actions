@@ -1,0 +1,30 @@
+waht is github actions: 
+GitHub Actions is a continuous integration and continuous delivery (CI/CD) platform that allows you to automate your build, test, and deployment pipeline. 
+You can create workflows that build and test every pull request to your repository, or deploy merged pull requests to production.
+
+benifit of github:
+# no need of external tool.
+# Automate tasks like building, testing, and deploying code, saving time and effort.
+
+components of GitHub Actions:
+workflow: collection of jobs,defined in a YAML file.
+name : 
+Event: any activity in the repo that can trigger a workflow 
+ON:
+Jobs: collection of steps 
+steps: actions to be taken, command,scripts 
+Actions:An action is a custom application for the GitHub Actions platform that performs a complex but frequently repeated task.
+Runners: A runner is a server that runs your workflows when they’re triggered. Each runner can run a single job at a time.
+
+How to create workflow:
+in git repository click actions and selecte set up a workflow yourself. it will create /.github/workflows/main.yaml(main.yaml our wish we can mention whatever name) there will
+crete YAML file
+
+
+
+
+
+
+ 
+  
+
