@@ -16,9 +16,21 @@ steps: actions to be taken, command,scripts
 Actions:An action is a custom application for the GitHub Actions platform that performs a complex but frequently repeated task.
 Runners: A runner is a server that runs your workflows when they’re triggered. Each runner can run a single job at a time.
 
-How to create workflow:
+HOW TO CREATE WORKFLOWS
 in git repository click actions and selecte set up a workflow yourself. it will create /.github/workflows/main.yaml(main.yaml our wish we can mention whatever name) there will
 crete YAML file
+====================================================================
+WE HAVE TO CREATE RUNNER TO CLONE THE REPOSITORY
+#  frist we have to add github tiken to our repository for that:
+     # go to which repo we want to clone. selecte repo settings <> selecte secter and veriables <> select actions <> in repository secrete. select new reposroy secrete 
+<> in caps give any name and paste github token.
+
+TO CREATE RUNNER:
+selecte repo settings <> select actions<> select runners <> select new self host runner <> select which server <> copy paste the command in sever 
+
+
+
+
 
 
 
