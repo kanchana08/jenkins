@@ -1,3 +1,9 @@
+frist i will have to add aws access and scecrete key 
+    [] aws confugure 
+
+spotinstance.py
+
+
 import boto3
 import csv
 from datetime import datetime, timezone
@@ -198,4 +204,146 @@ if __name__ == "__main__":
 		for instance in terminated_spot_instances:
 			print(instance)
 	else:
-		print("No terminated Spot instances found.")
+		print("No terminated Spot instances found.") 
+
+
+===============================================================================================
+spot instance with 'Region',  'Instance Type', 'Instance ID', 'AMI',
+        'Tag_Name', 'Launch Time', 'Terminated_time', 'Status',
+        'Run Duration (days, hours, minutes)', 'Spot Price (USD)', 'Estimated Cost (USD)'
+
+
+import boto3
+import csv
+from datetime import datetime, timezone
+import pytz
+
+def format_run_duration(duration):
+    total_seconds = int(duration.total_seconds())
+    days, remainder = divmod(total_seconds, 86400)
+    hours, remainder = divmod(remainder, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return f"{days} days, {hours} hours, {minutes} minutes"
+
+def get_all_regions():
+    ec2 = boto3.client('ec2')
+    response = ec2.describe_regions()
+    return [region['RegionName'] for region in response['Regions']]
+
+def get_spot_price(region, instance_type, launch_time):
+    session = boto3.Session()
+    ec2 = session.client('ec2', region_name=region)
+    start_time = launch_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+    end_time = start_time
+
+    response = ec2.describe_spot_price_history(
+        InstanceTypes=[instance_type],
+        ProductDescriptions=['Linux/UNIX'],
+        StartTime=start_time,
+        EndTime=end_time
+    )
+
+    if response['SpotPriceHistory']:
+        return float(response['SpotPriceHistory'][0]['SpotPrice'])
+    return 0.0
+
+def get_terminated_spot_instances(region):
+    session = boto3.Session()
+    ec2 = session.client('ec2', region_name=region)
+    response = ec2.describe_instances()
+
+    terminated_spot_instances_info = []
+    ist = pytz.timezone('Asia/Kolkata')
+
+    for reservation in response['Reservations']:
+        for instance in reservation['Instances']:
+            if instance['State']['Name'] == 'terminated' and instance.get('InstanceLifecycle') == 'spot':
+                instance_id = instance['InstanceId']
+                instance_type = instance['InstanceType']
+                launch_time = instance['LaunchTime'].replace(tzinfo=pytz.utc)
+                ami_response = ec2.describe_images(ImageIds=[instance['ImageId']])
+                image_id = ami_response['Images'][0]['Name']
+
+
+                # Extract preferred tag
+                tags = instance.get('Tags', [])
+                preferred_keys = ['project']  # Add more tag keys here if needed
+                tag_name = ''
+                for tag in tags:
+                    if tag['Key'].lower() in preferred_keys:
+                        tag_name = f"{tag['Key']}: {tag['Value']}"
+                        break
+
+                launch_time_str = launch_time.astimezone(ist).isoformat()
+                l_time = launch_time.strftime("%Y-%m-%d %I:%M:%S %p")
+
+                try:
+                    termination_reason = instance['StateTransitionReason']
+                    terminated_time_str = termination_reason.split('(')[-1].strip(')')
+                    terminated_time = datetime.strptime(terminated_time_str, '%Y-%m-%d %H:%M:%S %Z')
+                    terminated_ftime = terminated_time.replace(tzinfo=pytz.utc)
+                except Exception as e:
+                    print(f"Could not parse terminated time for instance {instance_id} in {region}: {e}")
+                    continue
+
+                run_duration = terminated_ftime - launch_time
+                run_duration_str = format_run_duration(run_duration)
+
+                spot_instance_request_id = instance.get('SpotInstanceRequestId', None)
+                if not spot_instance_request_id:
+                    print(f"No Spot Instance Request ID found for instance {instance_id} in region {region}. Skipping.")
+                    continue
+
+                spot_price = get_spot_price(region, instance_type, launch_time)
+                run_duration_in_hours = run_duration.total_seconds() / 3600
+                estimated_cost = spot_price * run_duration_in_hours
+
+                terminated_spot_instances_info.append({
+                    'Region': region,
+                    'Instance Type': instance_type,
+                    'Instance ID': instance_id,
+                    'AMI': image_id,                        # <-- Added AMI here
+                    'Tag_Name': tag_name,
+                    'Launch Time': l_time,
+                    'Terminated_time': terminated_time_str,
+                    'Status': instance['State']['Name'],
+                    'Run Duration (days, hours, minutes)': run_duration_str,
+                    'Spot Price (USD)': spot_price,
+                    'Estimated Cost (USD)': estimated_cost
+                })
+
+    save_to_csv(terminated_spot_instances_info)
+    return terminated_spot_instances_info
+
+def save_to_csv(instances_info):
+    file_path = 'terminated_spot_instances.csv'
+    fieldnames = [
+        'Region',  'Instance Type', 'Instance ID', 'AMI',
+        'Tag_Name', 'Launch Time', 'Terminated_time', 'Status',
+        'Run Duration (days, hours, minutes)', 'Spot Price (USD)', 'Estimated Cost (USD)'
+    ]
+
+    with open(file_path, mode='a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        if csvfile.tell() == 0:
+            writer.writeheader()
+        for instance in instances_info:
+            writer.writerow(instance)
+
+if __name__ == "__main__":
+    regions = get_all_regions()
+    terminated_spot_instances = []
+
+    for region in regions:
+        print(f"Checking region: {region}")
+        instances = get_terminated_spot_instances(region)
+        terminated_spot_instances.extend(instances)
+
+    if terminated_spot_instances:
+        for instance in terminated_spot_instances:
+            print(instance)
+    else:
+        print("No terminated Spot instances found.")
+
+
+
