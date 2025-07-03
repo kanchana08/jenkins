@@ -1,0 +1,122 @@
+User restrictions: 
+
+ When the particular users make changes in GitLab then only job build get Succes. If other users make changes job will get failure:  
+
+For this my using Poll SCM as build trigger.  
+
+1. Below code for allowing one user.  We have to mention users email ID which is added to GitLab and GitLab username.       
+
+pipeline { 
+
+ agent any 
+
+stages { 
+    stage('Check Commit Author') { 
+        steps { 
+            script { 
+                // Use credentials to pass authentication for the Git command 
+                withCredentials([usernamePassword(credentialsId: 'PAT', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) { 
+                    // Check if the 'testing' directory exists and remove it before cloning 
+                    sh """ 
+                        if [ -d 'testing' ]; then 
+                            rm -rf testing 
+                        fi 
+                        export GIT_ASKPASS='echo'  
+                        git clone --depth 1 https://\$GIT_USERNAME:\$GIT_PASSWORD@git.stldev.io:1305/pradeepkumar.n/testing.git 
+                    """ 
+ 
+                    // Change directory to the cloned repository 
+                    dir('testing') { 
+                        // Get the author of the latest commit 
+                        def author = sh( 
+                            script: "git log -1 --pretty=format:'%ae'", 
+                            returnStdout: true 
+                        ).trim().toLowerCase() 
+ 
+                        echo "Last commit author: ${author}" 
+ 
+                        // Allow build only if the commit author is 'nadimpali.pradeepk@stellaripl.com' 
+                        def allowedAuthors = ['nadimpali.pradeepk@stellaripl.com'] 
+                        if (!(allowedAuthors.contains(author))) { 
+                            echo "Build skipped. Commit not from allowed authors." 
+                            currentBuild.result = 'SUCCESS' 
+                            error("Stopping build because the last commit was not from an allowed author.") 
+                        } 
+                    } 
+                } 
+            } 
+        } 
+    } 
+ 
+    stage('Checkout') { 
+        steps { 
+            // Checkout the code from the repository after author check 
+            git branch: 'main', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/pradeepkumar.n/testing.git' 
+        } 
+    } 
+ 
+    // Add other stages here as needed... 
+} 
+  
+
+} 
+
+                   
+
+ 
+
+2.Below code for allowing multiple users.  We have to mention users email ID which is added to GitLab. 
+
+pipeline {  
+
+agent any 
+
+stages { 
+    stage('Check Commit Author') { 
+        steps { 
+            script { 
+                // Use credentials to pass authentication for the Git command 
+                withCredentials([usernamePassword(credentialsId: 'PAT', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) { 
+                    // Check if the 'testing' directory exists and remove it before cloning 
+                    sh """ 
+                        if [ -d 'testing' ]; then 
+                            rm -rf testing 
+                        fi 
+                        export GIT_ASKPASS='echo' && git clone --depth 1 https://$GIT_USERNAME:$GIT_PASSWORD@git.stldev.io:1305/pradeepkumar.n/testing.git 
+                    """ 
+ 
+                    // Change directory to the cloned repository 
+                    dir('testing') { 
+                        // Get the author of the latest commit 
+                        def author = sh( 
+                            script: "git log -1 --pretty=format:'%ae'", 
+                            returnStdout: true 
+                        ).trim().toLowerCase() 
+ 
+                        echo "Last commit author: ${author}" 
+ 
+                        // Allow build if the commit author is either 'kanchanagm@stellaripl.com' or 'Nadimpali.PradeepK@stellaripl.com' 
+                        def allowedAuthors = ['kanchanagm@stellaripl.com', 'nadimpali.pradeepk@stellaripl.com'] 
+                        if (!(allowedAuthors.contains(author))) { 
+                            echo "Build skipped. Commit not from allowed authors." 
+                            currentBuild.result = 'SUCCESS' 
+                            error("Stopping build because the last commit was not from an allowed author.") 
+                        } 
+                    } 
+                } 
+            } 
+        } 
+    } 
+ 
+    stage('Checkout') { 
+        steps { 
+            // Checkout the code from the repository after author check 
+            git branch: 'main', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/pradeepkumar.n/testing.git' 
+        } 
+    } 
+ 
+     
+} 
+  
+
+}
