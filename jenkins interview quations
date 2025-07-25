@@ -1,0 +1,40 @@
+
+1. Jenkins Fundamentals & Setup:
+
+    Explain the Jenkins master-agent architecture and its benefits.
+    How do you secure a Jenkins instance? Discuss authentication, authorization, and secret management.
+    Describe the process of setting up a Jenkins pipeline from scratch, including SCM integration and build triggers.
+
+2. Jenkins Pipelines (Declarative & Scripted):
+
+    Differentiate between Declarative and Scripted Pipelines, providing use cases for each.
+    How do you manage and reuse pipeline code using Shared Libraries?
+    Explain how to handle errors and implement retry mechanisms within a Jenkins pipeline.
+    How do you pass parameters between stages or jobs in a pipeline?
+
+3. Plugins & Integrations:
+
+    Discuss common Jenkins plugins you have used and their functionalities (e.g., Git, Maven, SonarQube, Docker, Kubernetes).
+    How do you integrate Jenkins with external tools like SonarQube for code quality analysis or Slack/Teams for notifications?
+    Explain how to manage plugin dependencies and updates in a stable manner.
+
+4. Advanced Concepts & Best Practices:
+
+    How do you optimize Jenkins performance for large-scale environments? (e.g., distributed builds, agent allocation).
+
+Describe your approach to managing credentials and sensitive information in Jenkins securely.
+How do you implement a rollback mechanism in a Jenkins pipeline? 
+Discuss strategies for monitoring Jenkins health and performance.
+What are some common anti-patterns in Jenkins usage, and how do you avoid them?
+
+5. Troubleshooting & Problem Solving:
+
+    You encounter a failed Jenkins build. Describe your systematic approach to troubleshooting and identifying the root cause.
+    How would you handle a situation where a Jenkins agent becomes unresponsive?
+    Explain how to debug a failing Jenkins pipeline.
+
+6. Scenario-Based Questions:
+
+    Design a Jenkins pipeline for a microservices application with multiple repositories and deployment environments.
+    How would you implement Continuous Delivery for a mobile application using Jenkins?
+    Imagine a scenario where a critical build fails in production. What steps would you take using Jenkins to mitigate the issue and prevent future occurrences?
