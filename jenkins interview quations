@@ -49,3 +49,12 @@ ANS:- Jenkins integrates with a wide range of tools through its extensive plugin
     Orchestration: Kubernetes.
     Code Quality: SonarQube.
     Artifact Management: Nexus, Artifactory.
+8.Explain how to set up a Jenkins job/pipeline.
+ ANS:-   Setting up a Jenkins job or pipeline typically involves:
+
+    Creating a new item: Choose "Freestyle project" for simple jobs or "Pipeline" for defining pipelines as code.
+    Source Code Management (SCM): Configure the repository (e.g., Git) and credentials.
+    Build Triggers: Define when the job should run (e.g., polling SCM, webhook, scheduled).
+    Build Environment: Configure environment variables, tool installations (JDK, Maven), etc.
+    Build Steps/Pipeline Script: Define the commands or pipeline stages to execute (e.g., compile, test, deploy).
+    Post-build Actions: Configure actions after the build (e.g., email notifications, archiving artifacts).
