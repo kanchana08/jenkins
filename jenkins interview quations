@@ -38,3 +38,14 @@ What are some common anti-patterns in Jenkins usage, and how do you avoid them?
     Design a Jenkins pipeline for a microservices application with multiple repositories and deployment environments.
     How would you implement Continuous Delivery for a mobile application using Jenkins?
     Imagine a scenario where a critical build fails in production. What steps would you take using Jenkins to mitigate the issue and prevent future occurrences?
+
+7. How do you integrate Jenkins with other tools in a DevOps ecosystem?
+ANS:- Jenkins integrates with a wide range of tools through its extensive plugin ecosystem:
+
+    Version Control: Git, SVN (using respective plugins).
+    Build Automation: Maven, Gradle, Ant.
+    Testing Frameworks: JUnit, Selenium, JMeter.
+    Containerization: Docker.
+    Orchestration: Kubernetes.
+    Code Quality: SonarQube.
+    Artifact Management: Nexus, Artifactory.
