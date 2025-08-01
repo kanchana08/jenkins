@@ -1,0 +1,192 @@
+ng-tps-staging
+
+frist check the git clone (for that copy the fastclose code, remove the agent name ask which server and change the gitlab URL)
+now check the git clone 
+
+pipeline { 
+
+  agent {label 'Server-172'}
+
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+
+           git branch: 'main', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/ng-tps.git'
+
+              } 
+
+         } 
+    }
+}
+
+secondlly 
+in server var/www/html  create tps-staging folder and give permmission chown -R jenkins:jenkins tps-staging
+
+
+copy the ng-tps code and paste into in ng-tps-staging 
+
+
+add the git parameter 
+
+in pipeline chege the folder path as per the devloper 
+
+pipeline { 
+
+  agent {label 'Server-172'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+               echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+              git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/ng-tps.git', branch: "${params.FROMBRANCH.split('/').last()}"   
+
+            
+
+              } 
+
+         }  
+     stage("package install & build"){
+         steps{
+             sh "rm -rf node_modules || true && rm -rf package-lock.json || true"
+             sh "npm install"
+          //   sh " npm i @esbuild/linux-x64"
+             sh "npm run build -stage"    ==========================(here we have to chnge -stage)
+         }
+     }
+     stage("Deploying dist to HTML path"){
+         steps{
+             sh " cp -r dist/fuse/browser/* /var/www/html/tps-staging " ===========================(/var/www/html/tps-staging change here)
+             sh "cp -r /var/www/html/tps-staging/icons /var/www/html/tps-staging/assets"   =========(/var/www/html/tps-staging/assets change here)
+         
+         }
+     }
+    }
+}
+
+check it 
+ cat .htaccess if they said not comming copy psate 
+
+===================================================================================================================
+nest-tps-staging
+
+
+ng-tps-staging
+
+frist check the git clone (for that copy the fastclose code, remove the agent name ask which server and change the gitlab URL)
+now check the git clone 
+
+pipeline { 
+
+  agent {label 'Server-172'}
+
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+
+           git branch: 'main', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/ng-tps.git'
+
+              } 
+
+         } 
+    }
+}
+
+check it
+
+secondlly 
+in server /var/opt/ create  folder nest-tps-staging  and give permmission chown -R jenkins:jenkins nest-tps-staging
+
+we have to crete .env file in  /var/opt/nest-tps-staging 
+
+copy the nest-tps code and paste into in nest-tps-staging
+
+pipeline { 
+
+  agent {label 'Server-172'}
+  
+   tools {nodejs "npm"}
+   
+    stages{ 
+
+      stage('git checkout'){ 
+        steps { 
+             dir('/var/opt/nest-tps-staging') { ==========================(here we have to chnge dir)
+             echo "User selected branch is ${params.FROMBRANCH.split('/').last()}" 
+           git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/nest-tps.git', branch: "${params.FROMBRANCH.split('/').last()}" 
+
+             }
+
+              } 
+
+         }  
+          
+     stage("package install & build"){
+         steps{
+              dir('/var/opt/nest-tps-staging') {   ==========================(here we have to chnge dir)
+
+             sh "npm install"
+             sh "npx prisma generate"
+             sh "npm run build"
+              }
+         }
+     }
+      stage("pm2 service"){
+         steps{
+              dir('/var/opt/nest-tps-staging') {  ==========================(here we have to chnge dir)
+                  script {
+                        sh '''
+                    APP_NAME="tps-staging"   ==========================(here we have to chnge tps-staging )
+                    
+                    if pm2 describe $APP_NAME > /dev/null; then
+                      pm2 restart $APP_NAME
+                    else
+                      pm2 start staging.config.js   ==========================(here we have to chnge staging.config.js )
+                    fi
+                    '''
+                  }
+              }  
+         }
+     }
+    }
+}
+
+
+===================================================================
+error :EPERM: operation not permitted copyfile'/var/opt/nest-county-search/src$ cd modules/email/templates/' ->'/var/opt/nest-county-search/src$ cd modules/email/templates/'
+frist we have to ask which user  
+give chown -R jenkins:jenkins foldername   
+
+check 
+pm2 list  : to check the service  
+if staus is 0% or something =====[service not running]
+pm2 delete idnumber 
+pm2 start prod.config.js
+pm2 list 
+pm2 logs ============here we will get info 
+
+
+======================================
+for new server 
+[]login to server 
+[]check the jenkins users is created or not if not create jenkins users 
+[]useradd -m jenkins
+[]passwd jenkins (create password)
+[] usermod -aG sudo jenkins (give sudo permission )
+
+to add slave in jenkins, we will create credentialsId means <> manage jenkins <> credentia <>add credentia<> give IP and password (which we create password for jenkins user in server)
+
+ 
+ 
+ 
+
+
+
+
+
+
+
