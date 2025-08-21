@@ -1,0 +1,37 @@
+[]it will create one folder in jenkins workspace which we gaved a git folder. 
+
+pipeline {
+    agent any
+    environment {
+        GIT_TOKEN = credentials('GIT')
+        WORKSPACE_DIR = '/var/lib/jenkins/workspace/gitclone'                       ===========================>jenkins workspace 
+    }
+    stages {
+        stage('Sparse Clone without deleting') {
+            steps {
+                dir("${WORKSPACE_DIR}") {
+                    sh '''
+                        if [ ! -d ".git" ]; then
+                            # Initialize git repo only once
+                            git init
+                            git remote add origin https://${GIT_TOKEN}@github.com/kanchana08/angular.git
+                            git config core.sparseCheckout true
+                        fi
+ 
+                        # Ensure sparse checkout file exists
+                        echo "my_folder/" > .git/info/sparse-checkout                       =============================================>give which folder u want to clone ex:my_folder
+ 
+                        # Fetch latest from origin
+                        git fetch origin
+ 
+                        # Checkout or update master branch
+                        git checkout -f master
+ 
+                        # Pull latest changes (will update only 'my_folder')
+                        git pull origin master
+                    '''
+                }
+            }
+        }
+    }
+}
