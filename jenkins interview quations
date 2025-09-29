@@ -58,3 +58,12 @@ ANS:- Jenkins integrates with a wide range of tools through its extensive plugin
     Build Environment: Configure environment variables, tool installations (JDK, Maven), etc.
     Build Steps/Pipeline Script: Define the commands or pipeline stages to execute (e.g., compile, test, deploy).
     Post-build Actions: Configure actions after the build (e.g., email notifications, archiving artifacts).
+
+9. Clean the Jenkins workspace before/after a build to avoid cache/pollution issues.
+
+🧩 Example:
+post {
+    always {
+        cleanWs()
+    }
+}
