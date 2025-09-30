@@ -15,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Check if the branch is the desired one
-                    if (env.BRANCH_NAME == 'sub') {
+                    if (env.BRANCH_NAME == 'sub') {   =========================================>mention the branch name 
                         echo "Starting the job for branch: ${env.BRANCH_NAME}"
                         // Your build steps go here
                     } else {
