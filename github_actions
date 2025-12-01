@@ -7,6 +7,7 @@ benifit of github:
 # Automate tasks like building, testing, and deploying code, saving time and effort.
 
 components of GitHub Actions:
+
 workflow: collection of jobs,defined in a YAML file.
 name : 
 Event: any activity in the repo that can trigger a workflow 
@@ -18,8 +19,34 @@ Runners: A runner is a server that runs your workflows when they’re triggered.
 
 HOW TO CREATE WORKFLOWS
 in git repository click actions and selecte set up a workflow yourself. it will create /.github/workflows/main.yaml(main.yaml our wish we can mention whatever name) there will
-crete YAML file
-====================================================================
+create YAML file to clone git repo.
+
+
+name: Clone Private Repo
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  clone:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v3
+
+      - name: Clone private repo
+        run: |
+          git clone https://kanchana08:${{ secrets.TESTING }}@github.com/kanchana08/github_actions.git
+
+      - name: Run Linux command in cloned repo
+        run: |
+          cd github_actions
+          ls -la
+          echo "Current directory: $(pwd)"
+===========================================================================================================================================================
 WE HAVE TO CREATE RUNNER TO CLONE THE REPOSITORY
 #  frist we have to add github tiken to our repository for that:
      # go to which repo we want to clone. selecte repo settings <> selecte secter and veriables <> select actions <> in repository secrete. select new reposroy secrete 
