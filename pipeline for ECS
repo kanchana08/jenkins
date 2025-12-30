@@ -1,0 +1,78 @@
+[]Design and implement a secure, scalable CI/CD pipeline using Jenkins on AWS to deploy a containerized application to AWS ECS
+
+
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'us-east-1'
+        ECR_REPO = 'my-app'
+        IMAGE_TAG = "${BUILD_NUMBER}"
+        ACCOUNT_ID = '123456789012'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/org/my-app.git'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                sh 'npm test'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t $ECR_REPO:$IMAGE_TAG .
+                '''
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                sh '''
+                aws ecr get-login-password --region $AWS_REGION | \
+                docker login --username AWS --password-stdin \
+                $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+                docker tag $ECR_REPO:$IMAGE_TAG \
+                $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+                docker push \
+                $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                sh '''
+                aws ecs update-service \
+                  --cluster my-cluster \
+                  --service my-service \
+                  --force-new-deployment
+                '''
+            }
+        }
+    }
+}
+
+
+[]Why use ECS for deployment instead of EC2?
+
+Using ECS:
+
+No manual server management
+
+Automatic container restart
+
+Auto scaling
+
+Health checks
+
+Load balancer integration
