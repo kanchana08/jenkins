@@ -1,0 +1,7 @@
+if jenkins dashboard is not working. 
+
+[] login to jenkins server 
+[]check jenkins status. if its running ignore it. not running try to run the jenkins. 
+[] check the java is there or not. not there install or update the version. 
+[] check the port if any one the port number. 
+this are all basic step. 
