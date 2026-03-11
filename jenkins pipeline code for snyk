@@ -1,0 +1,153 @@
+Snyk :  
+ 
+
+is a security tool. That helps to automatically find and fix the vulnerabilities . 
+ 
+[] Step 1: Install the Snyk Security Plugin   
+
+[] Step 2: Configure Snyk Installation (Global Tool Configuration)   
+
+Go to Manage Jenkins > Global Tool Configuration. 
+
+Scroll down to the "Snyk Installations" section and click Add Snyk Installation. 
+
+Provide a Name (e.g., "Snyk Latest") for the installation. Remember this name as you will use it in your pipeline script. 
+
+Check Install automatically and select the latest version from the dropdown menu. This ensures the Snyk CLI binaries are kept up-to-date. 
+
+Save the changes. 
+
+[] Step 3 Configure Snyk API Token Credential  
+
+Obtain your API token from your Snyk account settings on the Snyk website. 
+
+Navigate to Manage Jenkins > Manage Credentials > System > Global credentials (unrestricted) > Add Credentials. 
+
+Select Snyk API Token as the Kind. 
+
+Paste your Snyk API token into the Token field, provide a unique ID (e.g., my-snyk-token), and optionally add a description. 
+
+Create the credential 
+
+ 
+
+Pipeline code : 
+ 
+
+stage('Scan with Snyk') { 
+     steps { 
+     script { 
+         snykSecurity( 
+         snykInstallation: 'Snyk Scanner', // Use the name from Part 1, Step 2 
+         snykTokenId: 'my-snyk-token',   // Use the ID from Part 1, Step 3 
+                       // Optional parameters: 
+         failOnIssues: true,             // Fails the build if issues found (default: true) 
+         severity: 'high',               // Minimum severity to fail the build (low, medium, high, critical) 
+         monitorProjectOnBuild: true,    // Monitors the project on  
+
+ 
+
+ 
+
+ 
+
+Jenkins pipeline code:  
+ 
+
+pipeline { 
+
+    agent any 
+
+    tools {nodejs "npm"} 
+
+    environment { 
+
+     
+
+        SNYK_API = "${env.SNYK_API}"   
+
+    } 
+
+  
+
+    stages { 
+
+        stage('checkout') { 
+
+            steps { 
+
+                     
+
+          git branch: 'master', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/pradeepkumar.n/angular-ng.git' 
+
+  
+
+                 
+
+  
+
+            } 
+
+        } 
+
+        stage('Build') { 
+
+            steps { 
+
+                echo 'Building...' 
+
+                sh "npm install" 
+
+                sh "npm run build" 
+
+  
+
+            } 
+
+        } 
+
+        stage('Test') { 
+
+      steps { 
+
+        echo 'Testing...' 
+
+        snykSecurity( 
+
+          snykInstallation: 'snyk@latest', 
+
+          snykTokenId: 'snyk-token', 
+
+           failOnIssues: true,              // 🔴 FAIL pipeline 
+
+           severity: 'critical'        // optional: low|medium|high|critical 
+
+           
+
+        ) 
+
+      } 
+
+    } 
+
+        stage('Deploy') { 
+
+            steps { 
+
+                echo 'Deploying...' 
+
+                // Your deploy steps go here 
+
+            } 
+
+        } 
+
+    } 
+
+} 
+
+ 
+ 
+ 
+  
+ 
