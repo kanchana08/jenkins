@@ -1,0 +1,42 @@
+pipeline { 
+    agent any
+
+    environment {
+        
+        AWS_REGION = 'us-east-2'
+        ZIP_NAME = "lambda-package-${BUILD_NUMBER}.zip"
+        LAMBDA_FUNCTION_NAME = "Jenkins_test_zip_code_function"
+    }
+
+    stages {
+
+        stage('Cloning Git') {
+            steps {
+                git branch: 'main', credentialsId: 'PAT', url: 'https://git.stldev.io:1305/pradeepkumar.n/testing.git'
+            } 
+        }
+
+        stage('Create ZIP') {
+            steps {
+                sh '''
+                echo "Creating ZIP package: $ZIP_NAME"
+                zip -r $ZIP_NAME . -x "*.git*" "*.jenkins*" 
+                '''
+            }
+        }
+        
+       stage('Upload ZIP to Lambda') {
+      steps {
+        withCredentials([aws(accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-dev-creds', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+          sh '''
+          echo "Uploading $ZIP_NAME to AWS Lambda..."
+          aws lambda update-function-code \
+            --function-name ${LAMBDA_FUNCTION_NAME} \
+            --zip-file fileb://$ZIP_NAME \
+            --region ${AWS_REGION}
+          '''
+        }
+      }
+    }
+  }
+}
