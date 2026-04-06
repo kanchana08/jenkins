@@ -1,6 +1,7 @@
 [] Developers use shared libraries to avoid writing the same code from scratch for multiple projects.Shared libraries share code across development projects, thus optimizing the software development life cycle. 
 [] in github repository will crete one directry vars, inside that will crete .groovy file with small and big latter (ex: hellowWorld.groovy)
-[] code :     def call() {
+[] code :    
+def call() {
 sh"docker build -t image:latest ."
   sh "docker images"
   sh "pwd"
