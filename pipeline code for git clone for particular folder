@@ -8,14 +8,14 @@ pipeline {
 
       stage('git checkout'){ 
         steps { 
-             dir('/var/opt/nest-tps-staging') {
-              
-           git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/nest-tps.git'
+             dir('/var/opt/nest-tps-staging') { =====================================> here we will change the path 
 
-             }
+              git credentialsId: 'PAT', url: 'https://git.stldev.io:1305/fullstack-team/nest-tps.git'
+                
+                   }
 
               } 
 
          }  
-}
+     }
 }
