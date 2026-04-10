@@ -1,8 +1,33 @@
-[] here we mentioned aws credentials in pythonfile so we need to converte python file into excutable file (.exe)
-[] we need inatall pyinstaller (pip install pyinstaller) 
-[] we need to move pythonfile folder 
-[] cd pythonfile folder 
-[] pyinstaller --onefile pythonfile.py    ------->command 
-[] after this it will create dist folder move to dist folder. in that dist folder one file will create
-[] ./filename ------------------> to run the in ubuntu server 
-[]filename   --------------------> to run the in windows server
+[] we have to install pyistaller to create .exe file  (excutable file) 
+[] pip install pyinstaller
+[] create python file  ex:-app.py 
+[] run the python file 
+    [] pyinstaller --onefile app.py
+[] it will create dist folder <> go to dist folder <> there we can see app.exe file
+[] double click the app.exe,file to work
+
+
+
+[] normaly we userd this method for stop and start the ec2. using this method we can store secure data 
+[] we will share .exe file <> is user double click the .exe file. file will run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
