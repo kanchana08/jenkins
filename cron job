@@ -12,3 +12,8 @@ command:
   ex: * * * * * /var/opt/example.sh  (it means every minut it will execute the shell script). 
 
 
+================================================================================================
+Task Scheduler:
+for windows(for laptop ) we can schedul the job. 
+
+
