@@ -4,7 +4,6 @@ for this we should selecte build with parameter
 [] build after otherjob build. when the job1 build success it will build job2 automatically. which branch selected in job1 it will take same branch for job2.
 for two different repo, i have to mentain same branch name then only it will work.
 
-
 job1:
 
 pipeline {
@@ -61,11 +60,8 @@ pipeline {
 }
 
 
-job2:(to selecte particular branch in job2, in build with parameter we have to mention which branch we want to build, manually we have to mention git branches)
 
-
-
-
+job2:- (to selecte particular branch in job2, in build with parameter we have to mention which branch we want to build, manually we have to mention git branches)
 
 
 pipeline {
