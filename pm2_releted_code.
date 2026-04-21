@@ -341,5 +341,180 @@ pipeline {
         }  
     }
 }
+====================================================================================================================
+it will check the root directory(ROOT_CONFIG) first if config.js file is there it will build the pm2. if its not there it will go to(ALT_CONFIG) another folder it will check and run the pm2. 
+[] this for single server 
+stage("pm2 service"){
+    steps{
+        dir('/var/opt/nest-titan-staging') {
+            script {
+                sh '''
+                APP_NAME="silk-title-stage"
+ 
+                ROOT_CONFIG="titan-staging.unidex-pm2.config.js"
+                ALT_CONFIG=".pm2configs/titan-staging.unidex-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                  pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                '''
+            }
+        }  
+    }
+}
+
+==================================================================================================================
+ [] this is for multiple server. 
+
+stage('pm2 start') {
+             agent {
+               label "${params.SLAVE}"
+           }
+            steps{
+                  dir('/var/opt/nest-ulrs') {
+                     script {
+                   if (params.SLAVE == 'Dev-93') {
+                        sh '''
+                APP_NAME="ulrs-dev"
+                    
+                ROOT_CONFIG="devpluto-pm2.config.js"
+                ALT_CONFIG=".pm2-configs/devpluto-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                  pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                    '''
+                   } else if (params.SLAVE == 'pluto') {
+                         sh '''
+                    APP_NAME="uniclose-dev"
+                    
+                     ROOT_CONFIG="pluto.unidex-pm2.config.js"
+                     ALT_CONFIG="pm2-configs/pluto.unidex-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                  pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                    ''' 
+                   } else if (params.SLAVE == 'BeeLine') {
+                        sh '''
+                APP_NAME="prod-primary"
+                    
+                ROOT_CONFIG="beeline-pm2.config.js"
+                ALT_CONFIG=".pm2-configs/beeline-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                 pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                    '''
+                   }  else if (params.SLAVE == 'Alpha') {
+                        sh '''
+                     APP_NAME="prod-primary"
+                    
+                ROOT_CONFIG="alpha-pm2.config.js"
+                ALT_CONFIG=".pm2-configs/alpha-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                  pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                    '''
+                   }  else if (params.SLAVE == 'CTC') {
+                        sh '''
+                APP_NAME="prod-primary"
+                    
+                ROOT_CONFIG="ctc-pm2.config.js"
+                ALT_CONFIG=".pm2-configs/ctc-pm2.config.js"
+ 
+                if [ -f "$ROOT_CONFIG" ]; then
+                  CONFIG_PATH="$ROOT_CONFIG"
+                  echo "Using root config: $CONFIG_PATH"
+                elif [ -f "$ALT_CONFIG" ]; then
+                  CONFIG_PATH="$ALT_CONFIG"
+                  echo "Using .pm2configs config: $CONFIG_PATH"
+                else
+                  echo "No PM2 config file found!"
+                  exit 1
+                fi
+ 
+                if pm2 describe $APP_NAME > /dev/null; then
+                  pm2 restart $APP_NAME
+                else
+                  pm2 start $CONFIG_PATH
+                fi
+                    '''
+                   }
+               }
+                  
+                    
+            }
+        }
+       
+        }  
+    }
+}
 
 
