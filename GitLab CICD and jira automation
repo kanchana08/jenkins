@@ -1,0 +1,50 @@
+Gitlab CI/CD: 
+
+ 
+
+[] Go to GitLab repo <> create a file name with .gitlab-ci.yml  in main branch 
+
+[] Go to settings <>CI/CD<>runner<>gave tag name (whatever)<>create runner  
+
+[] select the server type <> we will get command <> copy the command  
+
+ 
+[] Go to the slave server. 
+[] we have to install runners on the slave server.  
+[] past the command.  
+[] we will get connection success.  
+ 
+[] in GitLab also we can see online.  
+ 
+[] sample .gitlab-ci.yml 
+# Define the order of stages 
+stages: 
+ - build 
+ - test 
+ - deploy 
+ 
+# Define a job for the build stage 
+build-job: 
+ stage: build 
+ script: 
+   - echo "Compiling the code..." 
+ 
+# Define a job for the test stage 
+test-job: 
+ stage: test 
+ script: 
+   - echo "Running unit tests..." 
+ 
+# Define a job for the deploy stage 
+deploy-job: 
+ stage: deploy 
+ script: 
+   - echo "Deploying application to production..." 
+ rules: 
+   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # Only deploy from the main branch 
+ 
+
+Jira automation:   
+
+[] select the spaces <> click on three dots <> select workspace <> space setting <> Automation  
+ 
